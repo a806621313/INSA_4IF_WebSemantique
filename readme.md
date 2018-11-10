@@ -4,11 +4,18 @@
 
 ### Goals
 
-TODO
++ Writing SPARQL queries to obtain semantic information about a well-defined subject from RDF databases such as DBpedia
++ Using the Jena Framework and RDF API to query and analyse RDF graphs from a Java Servlet
++ Designing a user-friendly web interface
 
 ### Subject
 
-TODO
+This project focuses on the motion picture industry. Our application will handle information about :
++ Movies
++ Companies (production companies, film studios)
++ Directors, composers...
+
+Our goal is to provide a big picture of the film industry and to reveal the relationships between movies, companies and artists.
 
 ## Contributing
 
