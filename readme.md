@@ -34,6 +34,8 @@ Examples of contributions :
 
 Contributions to the project are made in the `/project/` folder.
 
+The `/project/` folder is the root of a Java Maven Web Application configured to be deployed on a Tomcat server.
+
 #### Coding Conventions
 
 This project will observe Google's coding standards for code written in Java, JavaScript and HTML/CSS :
