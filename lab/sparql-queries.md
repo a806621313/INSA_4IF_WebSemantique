@@ -1,47 +1,123 @@
-A FAIRE :
-Rechercher entreprise film
-Rechercher logo entreprise
-Rechercher entreprise parente
+## TODO
+
+- [x] Film Production Companies
+- [x] Movies names
+
+- [x] Movies produced by a Company
+- [x] Movies distributed by a Company
+
+- [x] Number of Movies produced by a Company
+- [x] Movie duration
+- [ ] Company Logo
+- [ ] Parent Company
+
 Rechercher capital entreprise
-Rechercher films entreprise
-Rechercher nombre de film d’une entreprise
+
 Rechercher filiales d’une entreprise
+
 Rechercher acteurs d’un film
-Rechercher durée d’un film
+
 Rechercher budget d’un film
+
 Rechercher nombre d’entrées d’un film
+
 Rechercher  recette d’un film
+
 Rechercher le PDG d’une entreprise
+
 Rechercher producteurs d’un film
+
 Rechercher distributeurs d’un film
+
 Rechercher compositeur musique d’un film
+
 Rechercher genre d’un film
 
-Chercher tous les entreprises de film
-select ?s ?o
-where
-{
-?s rdf:type dbo:Company ;
-rdf:type ?o .
-FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+## Warning
+
+DBpedia restrict the number of results per query to 10000, and the maximum offset is 40000.
+
+## Core Resources
+
+### Film Production Companies
+
+These are the only companies that we will handle.
+
+```
+SELECT ?c WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
 }
+```
 
-Propriété qui détermine le propriétaire du film
-dbp:studio nom de l'entreprise.
+### Movies
 
-Tous les films de toutes les entreprises.
-select ?film ?s
-where
-{
-?s rdf:type dbo:Company ;
-rdf:type ?o .
-?film rdf:type dbo:Film ;
-dbp:studio ?s .
-FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+These are the only movies that we will handle. They must have a known duration.
+
+A workaround will be necessary to get all the movie names, because there are more than 100.000 movies in the database !
+
+```
+SELECT DISTINCT ?f WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:runtime ?r .
 }
+ORDER BY ?f
+```
 
-Nombre des films d’une entreprise
-%%Exemple de Pixar
+## Relationships
+
+### Movies and the Company that produced each Movie
+
+The Movie and the Company that made the movie (`dbp:studio`).
+
+```
+SELECT ?f ?c WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o .
+  ?f rdf:type dbo:Film ;
+     dbp:studio ?c .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+}
+```
+
+### Movies and the Company that distributed each Movie
+
+The Movie and the Company that made each Movie accessible to the public (`dbo:distributor`).
+
+```
+SELECT ?m ?c WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o .
+  ?m rdf:type dbo:Film ;
+     dbo:distributor ?c .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+}
+```
+
+## Informations about Resources
+
+### Number of Movies made by a Company
+
+```
+SELECT ?c (COUNT(?m) AS ?numberOfMovies) WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o .
+  ?m rdf:type dbo:Film ;
+     dbp:studio ?c .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+}
+ORDER BY DESC(?numberOfMovies)
+```
+
+```
+SELECT (COUNT(?m) AS ?numberOfMovies) WHERE {
+  <http://dbpedia.org/resource/Universal_Television> rdf:type dbo:Company .
+  ?m rdf:type dbo:Film ;
+     dbp:studio <http://dbpedia.org/resource/Universal_Television> .
+}
+```
+
 select ?entreprise (COUNT(?film) as ?NbFilms)
 where
 {
