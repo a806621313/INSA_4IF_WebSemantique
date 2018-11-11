@@ -13,10 +13,10 @@
 
 - [x] Number of Movies produced by a Company
 - [x] Movie duration
-- [ ] Company Logo
+- [x] Company Logo
 - [ ] Company Assets
 - [x] Movie Budget
-- [ ] Movie Box Office
+- [x] Movie Box Office
 - [ ] Company CEO
 
 
@@ -115,6 +115,15 @@ SELECT ?f ?c WHERE {
 }
 ```
 
+### Movie Producer
+
+```
+SELECT ?f ?d WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:director ?d .
+}
+```
+
 ### Parent Company
 
 ```
@@ -165,6 +174,14 @@ SELECT ?c ?l WHERE {
 ```
 SELECT ?b WHERE {
   <http://dbpedia.org/resource/Cars_(film)> dbo:budget ?b .
+}
+```
+
+### Movie Box Office
+
+```
+SELECT ?b WHERE {
+  <http://dbpedia.org/resource/Cars_(film)> dbo:gross ?b .
 }
 ```
 
