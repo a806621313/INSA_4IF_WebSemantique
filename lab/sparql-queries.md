@@ -115,6 +115,17 @@ SELECT ?f ?c WHERE {
 }
 ```
 
+### Parent Company
+
+```
+SELECT ?c ?p WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o ;
+     dbo:parentCompany ?p .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+}
+```
+
 ## Informations about Resources
 
 ### Number of Movies made by a Company
@@ -145,17 +156,6 @@ SELECT ?c ?l WHERE {
   ?c rdf:type dbo:Company ;
      rdf:type ?o ;
      dbp:logo ?l .
-  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
-}
-```
-
-### Parent Company
-
-```
-SELECT ?c ?p WHERE {
-  ?c rdf:type dbo:Company ;
-     rdf:type ?o ;
-     dbo:parentCompany ?p .
   FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
 }
 ```
