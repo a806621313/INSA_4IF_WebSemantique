@@ -1,41 +1,26 @@
 ## TODO
 
 - [x] Film Production Companies
-- [x] Movies names
+- [x] Movies
 
 - [x] Movies produced by a Company
 - [x] Movies distributed by a Company
+- [x] Actors starred in a Movie
+- [x] Movie Director
+- [ ] Movie Producer (staff) ?
+- [x] Movie Music Composer
+- [ ] Company Subsidiaries / Parent Company
 
 - [x] Number of Movies produced by a Company
 - [x] Movie duration
 - [ ] Company Logo
-- [ ] Parent Company
+- [ ] Company Assets
+- [x] Movie Budget
+- [ ] Movie Box Office
+- [ ] Company CEO
 
-Rechercher capital entreprise
 
-Rechercher filiales d置ne entreprise
-
-Rechercher acteurs d置n film
-
-Rechercher budget d置n film
-
-Rechercher nombre d弾ntr馥s d置n film
-
-Rechercher  recette d置n film
-
-Rechercher le PDG d置ne entreprise
-
-Rechercher producteurs d置n film
-
-Rechercher distributeurs d置n film
-
-Rechercher compositeur musique d置n film
-
-Rechercher genre d置n film
-
-## Warning
-
-DBpedia restrict the number of results per query to 10000, and the maximum offset is 40000.
+Warning : DBpedia restrict the number of results per query to 10000, and the maximum offset is 40000.
 
 ## Core Resources
 
@@ -86,12 +71,47 @@ SELECT ?f ?c WHERE {
 The Movie and the Company that made each Movie accessible to the public (`dbo:distributor`).
 
 ```
-SELECT ?m ?c WHERE {
+SELECT ?f ?c WHERE {
   ?c rdf:type dbo:Company ;
      rdf:type ?o .
-  ?m rdf:type dbo:Film ;
+  ?f rdf:type dbo:Film ;
      dbo:distributor ?c .
   FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+}
+```
+
+### Actors of a Movie
+
+```
+SELECT ?f ?a WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:starring ?a
+}
+```
+
+Example : Actors of the Movie "Cars"
+
+```
+SELECT ?a WHERE {
+  <http://dbpedia.org/resource/Cars_(film)> dbo:starring ?a
+}
+```
+
+### Movie Director
+
+```
+SELECT ?f ?d WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:director ?d .
+}
+```
+
+### Movie Music Composer
+
+```
+SELECT ?f ?c WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:musicComposer ?c .
 }
 ```
 
@@ -118,61 +138,40 @@ SELECT (COUNT(?m) AS ?numberOfMovies) WHERE {
 }
 ```
 
-select ?entreprise (COUNT(?film) as ?NbFilms)
-where
-{
-?entreprise rdf:type dbo:Company .
-?film rdf:type dbo:Film ;
-dbp:studio ?enreprise .
-FILTER (?entreprise = dbr:Pixar)
-}
+### Company Logo
 
-Trouver les acteurs et producteurs et music composers d置n film
-%%Exemple Cars_(film)
-select ?film ?actor
-where
-{
-?film rdf:type dbo:Film .
-?film dbo:starring ?actor .
-FILTER (?film = <http://dbpedia.org/resource/Cars_(film)>)
+```
+SELECT ?c ?l WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o ;
+     dbp:logo ?l .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
 }
+```
 
-Trouver logo entreprise
-select ?entreprise ?logo
-where
-{
-?entreprise a dbo:Company ;
-a ?o ;
-dbp:logo ?logo.
-FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
-}
+### Parent Company
 
-Trouver entreprise parente d置ne entreprise
-select ?entreprise ?parent
-where
-{
-?entreprise a dbo:Company ;
-a ?o ;
-dbo:parentCompany ?parent.
-FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
+```
+SELECT ?c ?p WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o ;
+     dbo:parentCompany ?p .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
 }
+```
 
-Trouver le budget d置n film
-%%Exemple Cars_(film)
-select ?film ?budget
-where
-{
-?film rdf:type dbo:Film .
-?film dbo:budget ?budget .
-FILTER (?film = <http://dbpedia.org/resource/Cars_(film)>)
-}
+### Movie Budget
 
-Trouver la dur馥 (en secondes) d置n film
-%%Exemple Cars_(film)
-select ?film ?duration
-where
-{
-?film rdf:type dbo:Film .
-?film dbo:runtime ?duration .
-FILTER (?film = <http://dbpedia.org/resource/Cars_(film)>)
+```
+SELECT ?b WHERE {
+  <http://dbpedia.org/resource/Cars_(film)> dbo:budget ?b .
 }
+```
+
+### Movie Duration (seconds)
+
+```
+SELECT ?d WHERE {
+  <http://dbpedia.org/resource/Cars_(film)> dbo:runtime ?d .
+}
+```
