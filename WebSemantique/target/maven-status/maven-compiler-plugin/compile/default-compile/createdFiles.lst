@@ -1,0 +1,4 @@
+Action.class
+service\main.class
+service\ServiceWebSeman.class
+service\ServiceWebSemanServlet.class

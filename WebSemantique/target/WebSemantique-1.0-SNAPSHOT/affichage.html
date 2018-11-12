@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>IF-4-Web Semantique-Project</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <div>
+           
+            <input style="margin-top:10px;margin-bottom: 10px;margin-left: 10px;width: 200px;height: 20px;" type="text" id="sujet" placeholder="Search actors,movies..."/>
+            <input style="margin-top:10px;margin-bottom: 10px;margin-left: 30px;height: 25px;" type="button" id="boutonValider" value="Chercher"/> 
+            <p style="margin-top:10px;margin-bottom: 10px;float: right">IF-4-Web Semantique-Project</p>
+     
+        </div>
+        <hr/>
+        <div>
+            <div style="float: left;width: 30%;border-right:2px solid #000;height: 650px">
+                <p style="margin-left: 50px;font-size: 30px">
+                    Query Suggestion:
+                </p>
+                <p style="margin-left: 50px;font-size: 20px">
+                    - Hars Zimmer<br/>
+                    - Dream Works<br/>
+                    - Resident Evil<br/>
+                </p>
+                
+            </div>
+            
+        
+            <div style="float: left;margin-left: 10px;width: 65%;">
+                <canvas></canvas>
+            </div>
+        </div>
+        
+        <script>
+            function afficher(vars,results){
+                $('#message').html('');
+                var i = 0;
+                var j = 0;
+                var temp;
+                var string = '';
+                for(i = 0;i < results.length;i++){
+                    string += '<p>';
+                    temp = results[i];
+                    for(j = 0; j < vars.length;j++){
+                        string += vars[j] + ' : ' + temp[vars[j]].value + '<br/>';
+                    }
+                    string += '</p>';
+                }
+                if(results.length == 0){
+                    $('#message').append('No Results');
+                }else{
+                    $('#message').append(string);
+                }
+            }
+
+            function chercher() {
+                var sujet = $('#sujet').val();
+                var type = $('#type').val();
+                var select = document.getElementById("objet");
+                var choice = select.selectedIndex;
+                var objet = select.options[choice].value;
+                console.log("In");
+                $('#message').html('Recherche en cours...');
+
+                $.ajax({
+                    url: './ServiceWebSeman',
+                    method: 'POST',
+                    data: {
+                        Action: 'Query',
+                        Sujet: sujet,
+                        Type: type,
+                        Objet: objet
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    // ici votre code...
+                    // 
+                    // si connexion ok, aller sur la page suivante :
+                    //$('#message').html('<b> bonjour </b>');
+                    var reponse = data;
+                    var vars = reponse.head.vars;
+                    var results = reponse.results.bindings;
+                    afficher(vars,results);
+                });
+            }
+
+            $(document).ready(function () {
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#boutonValider').on('click', function () {
+                    // affichage pour debugage dans la console javascript du navigateur
+                    console.log('Click sur le bouton "Chercher"');
+                    // appel de la fonction connexion
+                    chercher();
+                });
+            });
+
+        </script>
+    </body>
+</html>
