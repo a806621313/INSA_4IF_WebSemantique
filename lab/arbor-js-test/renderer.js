@@ -34,7 +34,7 @@ function renderer(canvasId) {
         var textMetrics = context.measureText(text);
         
         // drawing
-        context.strokeStyle = 'black'
+        context.strokeStyle = '#888888'
         context.lineWidth = 2
         context.beginPath()
         context.moveTo(pt1.x, pt1.y)
@@ -52,11 +52,11 @@ function renderer(canvasId) {
         context.font = '14pt Calibri';
         context.textAlign = 'center';
         var textMetrics = context.measureText(text);
-        var radius = (textMetrics.width) / 2 + 8 + node.data.radius;
+        node.data.radius = (textMetrics.width) / 2 + 8;
         
         // drawing
         context.beginPath();
-        context.arc(pt.x, pt.y, radius, 0, 2 * Math.PI, false);
+        context.arc(pt.x, pt.y, node.data.radius, 0, 2 * Math.PI, false);
         context.fillStyle = node.data.color;
         context.fill();
         context.lineWidth = 4;
