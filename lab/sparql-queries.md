@@ -7,18 +7,22 @@
 - [x] Films distributed by a Company
 - [x] Actors starred in a Film
 - [x] Film Director
-- [ ] Film Producer (staff) ?
+- [x] Film Producer (staff) ?
 - [x] Film Music Composer
-- [ ] Company Subsidiaries / Parent Company
+- [x] Company Subsidiaries / Parent Company
 
 - [x] Number of Films produced by a Company
 - [x] Film duration
-- [ ] Company Logo
+- [x] Company Logo
 - [ ] Company Assets
 - [x] Film Budget
-- [ ] Film Box Office
-- [ ] Company CEO
-
+- [x] Film Box Office
+- [O] Company CEO
+- [x] Actors who frequently worked with a given Actor
+- [x] Film Directors who frequently worked with a given Music Composer
+- [x] Film Directors who frequently worked for a given Studio
+- [x] Music Composer who frequently worked with a given Film Director
+- [x] Music Composer who frequently worked for a given Studio
 
 Warning : DBpedia restrict the number of results per query to 10000, and the maximum offset is 40000.
 
@@ -52,7 +56,7 @@ ORDER BY ?f
 
 ## Relationships
 
-### Movies and the Company that produced each Movie
+### Films and the Company that produced each Film
 
 The Film and the Company that made the Film (`dbp:studio`).
 
@@ -106,12 +110,32 @@ SELECT ?f ?d WHERE {
 }
 ```
 
+### Film Producer
+
+```
+SELECT ?f ?p WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:producer ?p .
+}
+```
+
 ### Film Music Composer
 
 ```
 SELECT ?f ?c WHERE {
   ?f rdf:type dbo:Film ;
      dbo:musicComposer ?c .
+}
+```
+
+### Parent Company
+
+```
+SELECT ?c ?p WHERE {
+  ?c rdf:type dbo:Company ;
+     rdf:type ?o ;
+     dbo:subsidiary ?p .
+  FILTER regex(str(?o), "WikicatFilmProductionCompaniesOf")
 }
 ```
 
@@ -168,6 +192,14 @@ SELECT ?b WHERE {
 }
 ```
 
+### Film Box Office
+
+```
+SELECT ?b WHERE {
+  <http://dbpedia.org/resource/Cars_(film)> dbo:gross ?b .
+}
+```
+
 ### Film Duration (seconds)
 
 ```
@@ -175,6 +207,7 @@ SELECT ?d WHERE {
   <http://dbpedia.org/resource/Cars_(film)> dbo:runtime ?d .
 }
 ```
+
 
 ## Suggestions
 
