@@ -24,6 +24,7 @@
 - [x] Film Directors who frequently worked with a given Producer
 - [x] Film Directors who frequently worked for a given Studio
 - [x] Music Composer who frequently worked with a given Film Director
+- [x] Music Composer who frequently worked with a given Producer
 - [x] Music Composer who frequently worked for a given Studio
 - [x] Producer who frequently worked for a given Studio
 - [x] Producer who frequently worked with a given Film Director
