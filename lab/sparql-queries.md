@@ -30,6 +30,11 @@
 - [x] Producer who frequently worked with a given Film Director
 - [x] Producer who frequently worked with a given actor
 - [x] Producer who frequently worked with a given Music Composer
+- [x] Famous films of a given Actor
+- [x] Famous films of a given Director
+- [x] Famous films of a given Producer
+- [x] Famous films of a given Music Composer
+- [x] Famous films of a given Studio
 
 Warning : DBpedia restrict the number of results per query to 10000, and the maximum offset is 40000.
 
@@ -240,6 +245,7 @@ SELECT ?a (COUNT(?a) AS ?n) WHERE {
 }
 GROUP BY ?a
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Actors who frequently starred with a given Producer
@@ -253,6 +259,7 @@ SELECT ?a (COUNT(?a) AS ?n) WHERE {
 }
 GROUP BY ?a
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Actors who frequently starred for a given studio
@@ -265,6 +272,7 @@ SELECT ?a (COUNT(?a) AS ?n) WHERE {
 }
 GROUP BY ?a
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Film Directors who frequently worked with a given Music Composer
@@ -278,6 +286,7 @@ SELECT ?d (COUNT(?d) AS ?n) WHERE {
 }
 GROUP BY ?d
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Film Directors who frequently starred with a given Producer
@@ -291,6 +300,7 @@ SELECT ?d (COUNT(?d) AS ?n) WHERE {
 }
 GROUP BY ?d
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Film Directors who frequently worked for a given Studio
@@ -303,6 +313,7 @@ SELECT ?d (COUNT(?d) AS ?n) WHERE {
 }
 GROUP BY ?d
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Music Composers who frequently worked with a given Film Director
@@ -316,6 +327,7 @@ SELECT ?c (COUNT(?c) AS ?n) WHERE {
 }
 GROUP BY ?c
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Music Composers who frequently starred with a given Producer
@@ -329,6 +341,7 @@ SELECT ?c (COUNT(?c) AS ?n) WHERE {
 }
 GROUP BY ?c
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Music Composers who frequently worked for a given Studio
@@ -341,6 +354,7 @@ SELECT ?c (COUNT(?c) AS ?n) WHERE {
 }
 GROUP BY ?c
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Producer who frequently worked for a given Studio
@@ -353,6 +367,7 @@ SELECT ?p (COUNT(?p) AS ?n) WHERE {
 }
 GROUP BY ?p
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 ### Producer who frequently worked with a given Film Director
@@ -366,6 +381,7 @@ SELECT ?p (COUNT(?p) AS ?n) WHERE {
 }
 GROUP BY ?p
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 
@@ -380,6 +396,7 @@ SELECT ?p (COUNT(?p) AS ?n) WHERE {
 }
 GROUP BY ?p
 ORDER BY DESC(?n)
+LIMIT 5
 ```
 
 
@@ -394,4 +411,65 @@ SELECT ?p (COUNT(?p) AS ?n) WHERE {
 }
 GROUP BY ?p
 ORDER BY DESC(?n)
+LIMIT 5
+```
+
+### Famous Films of a given Actor
+
+```
+SELECT ?f ?g WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:starring <http://dbpedia.org/resource/Gérard_Depardieu> ;
+     dbo:gross ?g .
+}
+ORDER BY DESC(xsd:integer(?g))
+LIMIT 5
+```
+
+### Famous Films of a given Director
+
+```
+SELECT ?f ?g WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:director <http://dbpedia.org/resource/Christopher_Nolan> ;
+     dbo:gross ?g .
+}
+ORDER BY DESC(xsd:integer(?g))
+LIMIT 5
+```
+
+### Famous Films of a given Producer
+
+```
+SELECT ?f ?g WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:producer <http://dbpedia.org/resource/Jerry_Bruckheimer> ;
+     dbo:gross ?g .
+}
+ORDER BY DESC(xsd:integer(?g))
+LIMIT 5
+```
+
+### Famous Films of a given Music Composer
+
+```
+SELECT ?f ?g WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:musicComposer <http://dbpedia.org/resource/Hans_Zimmer> ;
+     dbo:gross ?g .
+}
+ORDER BY DESC(xsd:integer(?g))
+LIMIT 5
+```
+
+### Famous Films of a given studio
+
+```
+SELECT ?f ?g WHERE {
+  ?f rdf:type dbo:Film ;
+     dbp:studio <http://dbpedia.org/resource/Metro-Goldwyn-Mayer> ;
+     dbo:gross ?g .
+}
+ORDER BY DESC(xsd:integer(?g))
+LIMIT 5
 ```
