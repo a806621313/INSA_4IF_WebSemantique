@@ -13,10 +13,7 @@ public class StringServices {
   }
   
   /**
-   * Computes a modified Levensthein distance between two Strings.
-   * 
-   * Computes the similarity between two Strings.
-   * Similarity of two Strings = length of the longest String - Levenshtein distance.
+   * Computes the Levensthein distance between two Strings.
    * 
    * @param query the user's query
    * @param resource a resource name
@@ -31,8 +28,8 @@ public class StringServices {
       table[0][i] = i;
     }
     
-    for(int i=1; i<=query.length(); ++i) {
-      for(int j=1; j<=resource.length(); ++j) {
+    for(int i=1; i<=query.length(); i++) {
+      for(int j=1; j<=resource.length(); j++) {
         int del = table[i-1][j] + 1;
         int ins = table[i][j-1] + 1;
         int rep = table[i-1][j-1] + (query.charAt(i-1) == resource.charAt(j-1) ? 0 : 1);
@@ -40,7 +37,7 @@ public class StringServices {
       }
     }
 
-    return Math.max(query.length(), resource.length()) - table[query.length()][resource.length()];
+    return table[query.length()][resource.length()];
   }
   
 }
