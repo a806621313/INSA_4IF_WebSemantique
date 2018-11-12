@@ -1,6 +1,7 @@
 package project.controller.services;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceServices {
@@ -20,15 +21,15 @@ public class ResourceServices {
     
   }
   
-  public static String getBestCompanyUri(String query) {
-    return "";
+  public static List<String> getCompaniesUriFromQuery(String query) {
+    return null;
   }
   
-  public static String getBestFilmUri(String query) {
-    return "";
+  public static List<String> getFilmsUriFromQuery(String query) {
+    return null;
   }
   
-   public static String getBestPersonUri(String query) {
-    return "";
+   public static List<String> getPersonsUriFromQuery(String query) {
+    return null;
   }
 }
