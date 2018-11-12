@@ -1,5 +1,6 @@
 # Build Directories
 /project/target/
+/lab/WebSemantique/target/
 
 # General
 .DS_Store
