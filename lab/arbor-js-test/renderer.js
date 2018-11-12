@@ -13,8 +13,18 @@ function renderer(canvasId) {
         var pos = $(canvas).offset();
         mousePoint = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
         nearest = particleSystem.nearest(mousePoint);
-        if(nearest.node.data.uri && nearest.distance < nearest.node.data.radius) {
-          queryResourceByUri(nearest.node.data.uri)
+        if(nearest.distance < nearest.node.data.radius){
+          if(nearest.node.data.uri) {
+            queryResourceByUri(nearest.node.data.uri)
+          }
+          else if (nearest.node.data.deploy)
+          {
+            queryDeployNode(nearest.node)
+          }
+          else if (nearest.node.data.focus)
+          {
+            queryFocusNode(nearest.node)
+          }
         }
       })
     },
