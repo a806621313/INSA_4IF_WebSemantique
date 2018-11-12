@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Web Semantique</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <h1 style ="text-align: center" id="titre">Web Semantique</h1>
+        <div style ="text-align: center; padding-left: 15%; padding-right: 15%; padding-top: 1%;">
+            <form>
+                Sujet : <input style="margin-top:10px;margin-bottom: 10px;" type="text" id="sujet" placeholder="Pixar"/>
+                <br/>
+                Type de query : <input style="margin-top:10px;margin-bottom: 10px;" type="text" id="type" placeholder="Select"/>
+                <br/>
+                 <select style="margin-top:10px;margin-bottom: 10px;" id="objet">
+                    <option value="All Film Production Companies">All Film Production Companies</option>
+                    <option value="Actors of a Film">Actors of a Film</option>
+                    <option value="Films and the Company that distributed each Film">Films and the Company that distributed each Film</option>
+                    <option value="Film Director">Film Director</option>
+                    <option value="Film Music Composer">Film Music Composer</option>
+                    <option value="Parent Company">Parent Company</option>
+                 </select> 
+                <br/>
+                <p>
+                Test unitaire : Selectionner toutes les proprietes de dbr:Pixar <a href="./ServiceWebSeman?Sujet=Pixar&Type=Select&Objet=Testunitaire">cliquer ici</a>
+                </p>
+                <br/>
+                <input type="button" id="boutonValider" value="Chercher"/> 
+            </form>
+        </div>
+        <div id="message" style="text-align: center"></div>
+        <script>
+            function afficher(vars,results){
+                $('#message').html('');
+                var i = 0;
+                var j = 0;
+                var temp;
+                var string = '';
+                for(i = 0;i < results.length;i++){
+                    string += '<p>';
+                    temp = results[i];
+                    for(j = 0; j < vars.length;j++){
+                        string += vars[j] + ' : ' + temp[vars[j]].value + '<br/>';
+                    }
+                    string += '</p>';
+                }
+                if(results.length == 0){
+                    $('#message').append('No Results');
+                }else{
+                    $('#message').append(string);
+                }
+            }
+
+            function chercher() {
+                var sujet = $('#sujet').val();
+                var type = $('#type').val();
+                var select = document.getElementById("objet");
+                var choice = select.selectedIndex;
+                var objet = select.options[choice].value;
+                console.log("In");
+                $('#message').html('Recherche en cours...');
+
+                $.ajax({
+                    url: './ServiceWebSeman',
+                    method: 'POST',
+                    data: {
+                        Action: 'Query',
+                        Sujet: sujet,
+                        Type: type,
+                        Objet: objet
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    // ici votre code...
+                    // 
+                    // si connexion ok, aller sur la page suivante :
+                    //$('#message').html('<b> bonjour </b>');
+                    var reponse = data;
+                    var vars = reponse.head.vars;
+                    var results = reponse.results.bindings;
+                    afficher(vars,results);
+                });
+            }
+
+            $(document).ready(function () {
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#boutonValider').on('click', function () {
+                    // affichage pour debugage dans la console javascript du navigateur
+                    console.log('Click sur le bouton "Chercher"');
+                    // appel de la fonction connexion
+                    chercher();
+                });
+            });
+
+        </script>
+    </body>
+</html>

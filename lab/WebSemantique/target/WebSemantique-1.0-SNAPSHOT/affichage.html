@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>IF-4-Web Semantique-Project</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <div>
+           
+            <input style="margin-top:10px;margin-bottom: 10px;margin-left: 10px;width: 200px;height: 20px;" type="text" id="sujet" placeholder="Search actors,movies..."/>
+            <input style="margin-top:10px;margin-bottom: 10px;margin-left: 30px;height: 25px;" type="button" id="boutonValider" value="Find"/> 
+            <p style="margin-top:10px;margin-bottom: 10px;float: right">IF-4-Web Semantique-Project</p>
+     
+        </div>
+        <hr/>
+        <div>
+            <div id="message" style="float: left;width: 30%;border-right:2px solid #000">
+                <p style="margin-left: 50px;font-size: 30px">
+                    Query Suggestion:
+                </p>
+                <p style="margin-left: 50px;font-size: 20px">
+                    - Hars Zimmer<br/>
+                    - Dream Works<br/>
+                    - Resident Evil<br/>
+                </p>
+                
+            </div>
+            
+        
+            <div style="float: left;margin-left: 10px;width: 65%;">
+                <canvas></canvas>
+            </div>
+        </div>
+        
+        <script>
+            var vars;
+            var results;
+            
+            function afficher(){
+                $('#message').html('');
+                var i = 0;
+                var temp;
+                var string = '';
+                string += '<p>';
+                for(i = 0;i < results.length;i++){
+                    temp = results[i];
+                    if(i == 0){
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Film'){
+                            console.log('In');
+                            string += 'Film : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '" checked="yes">' + '<br/>';
+                        }
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Actor'){
+                            string += 'Actor : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '" checked="yes">' + '<br/>';
+                        }
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Company'){
+                            string += 'Company : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '" checked="yes">' + '<br/>';
+                        }
+                    }else{
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Film'){
+                            console.log('In');
+                            string += 'Film : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '">' + '<br/>';
+                        }
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Actor'){
+                            string += 'Actor : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '">' + '<br/>';
+                        }
+                        if(temp['sort'].value == 'http://dbpedia.org/ontology/Company'){
+                            string += 'Company : ' + temp['name'].value + '<input type="radio" name="ressource" value="' + temp['s'].value + '">' + '<br/>';
+                        }
+                    }
+                }
+                string += '</p>';
+                string += '<input style="margin-top:0px;margin-bottom: 0px;margin-left: 100px;height: 25px;" type="button" id="boutonChercher" value="Search"/> ';
+                if(results.length == 0){
+                    $('#message').append('No Results');
+                }else{
+                    $('#message').append(string);
+                }
+            }
+
+            function chercher() {
+                var sujet = $('#sujet').val();
+                
+                $('#message').html('Recherche en cours...');
+
+                $.ajax({
+                    url: './ServiceWebSeman',
+                    method: 'POST',
+                    data: {
+                        Action: 'Query',
+                        Sujet: sujet,
+                        Type: 'Select',
+                        Objet: 'Find Resource'
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    // ici votre code...
+                    // 
+                    // si connexion ok, aller sur la page suivante :
+                    //$('#message').html('<b> bonjour </b>');
+                    var reponse = data;
+                    vars = reponse.head.vars;
+                    results = reponse.results.bindings;
+                    afficher();
+                });
+            }
+
+            $(document).ready(function () {
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#boutonValider').on('click', function () {
+                    // affichage pour debugage dans la console javascript du navigateur
+                    console.log('Click sur le bouton "Chercher"');
+                    // appel de la fonction connexion
+                    chercher();
+                });
+            });
+
+        </script>
+    </body>
+</html>
