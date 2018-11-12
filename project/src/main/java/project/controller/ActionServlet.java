@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import project.controller.services.ResourceServices;
 
 @WebServlet(name = "ActionServlet", urlPatterns = {"/ActionServlet"})
 public class ActionServlet extends HttpServlet {
@@ -19,8 +20,7 @@ public class ActionServlet extends HttpServlet {
    */
   @Override
   public void init(ServletConfig config) throws ServletException {
-    // perform SPARQL requests to get a list of movies, companies, etc.
-    // TODO
+    ResourceServices.init();
   }
   
   /**
