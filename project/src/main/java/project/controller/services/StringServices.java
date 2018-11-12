@@ -8,20 +8,39 @@ public class StringServices {
    * @param uri the URI
    * @return a valid alphanumeric identifier: the URI without symbols
    */
-  public String stripUriSymbols(String uri) {
+  public static String stripUriSymbols(String uri) {
     return uri.replaceAll("^[a-zA-Z0-9]+", "");
   }
   
   /**
-   * Computes the Levensthein distance between two Strings
+   * Computes a modified Levensthein distance between two Strings.
+   * 
+   * Computes the similarity between two Strings.
+   * Similarity of two Strings = length of the longest String - Levenshtein distance.
    * 
    * @param query the user's query
    * @param resource a resource name
    * @return the distance between query and resource
    */
-  public Integer levenshtein(String query, String resource) {
-    // TODO
-    return 0;
+  public static int levenshtein(String query, String resource) {
+    int[][] table = new int[query.length() + 1][resource.length() + 1];
+    for (int i=0; i<table.length; i++) {
+      table[i][0] = i;
+    }
+    for (int i=0; i<table[0].length; i++) {
+      table[0][i] = i;
+    }
+    
+    for(int i=1; i<=query.length(); ++i) {
+      for(int j=1; j<=resource.length(); ++j) {
+        int del = table[i-1][j] + 1;
+        int ins = table[i][j-1] + 1;
+        int rep = table[i-1][j-1] + (query.charAt(i-1) == resource.charAt(j-1) ? 0 : 1);
+        table[i][j] = Math.min(Math.min(ins, rep), del);
+      }
+    }
+
+    return Math.max(query.length(), resource.length()) - table[query.length()][resource.length()];
   }
   
 }

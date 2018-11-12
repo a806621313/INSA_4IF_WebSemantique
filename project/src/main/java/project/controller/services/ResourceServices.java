@@ -20,15 +20,15 @@ public class ResourceServices {
     
   }
   
-  public static String[] getBestCompanyUri(String query) {
-    return new String[]{};
+  public static String getBestCompanyUri(String query) {
+    return "";
   }
   
-  public static String[] getBestFilmUri(String query) {
-    return new String[]{};
+  public static String getBestFilmUri(String query) {
+    return "";
   }
   
-   public static String[] getBestPersonUri(String query) {
-    return new String[]{};
+   public static String getBestPersonUri(String query) {
+    return "";
   }
 }
