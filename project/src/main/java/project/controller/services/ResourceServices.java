@@ -35,92 +35,83 @@ public class ResourceServices {
   public static Map<String, String> matchPersonsByName(String name) {
     return matchResourcesByName(name, PERSONS);
   }
-  
-  
 
   private static Map<String, String> matchResourcesByName(String name, Map<String, String> res) {
+    Map<String, String> relevantResults = new LinkedHashMap<String, String>();
+    String[] queryWords = name.trim().split("\\s+");  // Each word composing the name query
     
-    Map<String, String> releventResults = new LinkedHashMap<String, String>();
-    
-    String[] queryWords = name.trim().split("\\s+");  //Each word composing the name
-    
-    
-    //Temporary Map to save distance between query and resources
-    Map<String, Integer> match = new LinkedHashMap<String, Integer>();
+    // Temporary Map to save the distance between the query and the resources
+    Map<String, Integer> resourceMatches = new LinkedHashMap<String, Integer>();
     for (Map.Entry<String, String> entry : res.entrySet()) {
-        match.put(entry.getKey(),0);
+      resourceMatches.put(entry.getKey(), 0);
     }
       
-     //Find resource names that contain query words
-    boolean nameMatchQuery = false;
-    for(Map.Entry<String, Integer> keyRes : match.entrySet()){
-        for (String queryWord : queryWords) {
-            if (keyRes.getKey().toUpperCase().contains(queryWord.toUpperCase())) {
-                nameMatchQuery = true;
-                keyRes.setValue(keyRes.getValue()+1);
-            }
+     // Find resource names that contain query words
+    boolean queryWordsMatchResources = false;
+    for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
+      for (String word : queryWords) {
+        if (match.getKey().toUpperCase().contains(word.toUpperCase())) {
+          queryWordsMatchResources = true;
+          match.setValue(match.getValue() + 1);
         }
+      }
     }
     
-    if(nameMatchQuery){
-         // Sort the resources by relevance (number of matches)
-        int maxMatch;
-        String keyMatch;
-        do{
-            maxMatch = 0;
-            keyMatch = null;
-            
-            for(Map.Entry<String, Integer> keyRes : match.entrySet()){
-                if(keyRes.getValue()>maxMatch){
-                    maxMatch = keyRes.getValue();
-                    keyMatch = keyRes.getKey();
-                }
-            }
-            
-            if(keyMatch!=null){
-                releventResults.put(keyMatch, res.get(keyMatch));
-                match.remove(keyMatch);
-            }
-        }while(maxMatch!=0);
+    if (queryWordsMatchResources) {
+      // Sort the resources by relevance (number of matches)
+      int maxMatchValue;
+      String maxMatchResource;
+      do {
+        maxMatchValue = 0;
+        maxMatchResource = null;
+
+        for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
+          if (match.getValue() > maxMatchValue){
+            maxMatchValue = match.getValue();
+            maxMatchResource = match.getKey();
+          }
+        }
+
+        if (maxMatchResource != null){
+          relevantResults.put(maxMatchResource, res.get(maxMatchResource));
+          resourceMatches.remove(maxMatchResource);
+        }
+      } while(maxMatchValue != 0);
     }
     // If no resource name matches the query, compute Levenshtein distances
-    else{
-        for(Map.Entry<String, Integer> keyRes : match.entrySet()){
-            int minDistance = LEVENSHTEIN_LIMIT+1;
-            for(String resourceWord : keyRes.getKey().split("\\s+")){
-                for (String queryWord : queryWords) {
-                    int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
-                    if(distance<minDistance){
-                        minDistance = distance;
-                    }
-                }
-            }
-            keyRes.setValue(minDistance);
+    else {
+      for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
+        int minDistance = LEVENSHTEIN_LIMIT+1;
+        for(String resourceWord : match.getKey().split("\\s+")){
+          for (String queryWord : queryWords) {
+            int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
+            minDistance = Math.min(minDistance, distance);
+          }
         }
-        
-        // Sort the resources by relevance (lowest Levenshtein distance)
-        int minMatch;
-        String keyMatch;
-        do{
-            minMatch = LEVENSHTEIN_LIMIT+1;
-            keyMatch = null;
-            for(Map.Entry<String, Integer> keyRes : match.entrySet()){
-                if(keyRes.getValue()<minMatch){
-                    minMatch = keyRes.getValue();
-                    keyMatch = keyRes.getKey();
-                }
-            }
-            
-            if(keyMatch!=null){
-                releventResults.put(keyMatch, res.get(keyMatch));
-                match.remove(keyMatch);
-            }
-        }while(minMatch<=LEVENSHTEIN_LIMIT);
+        match.setValue(minDistance);
+      }
+
+      // Sort the resources by relevance (lowest Levenshtein distance)
+      int maxMatchValue;
+      String maxMatchResource;
+      do {
+        maxMatchValue = LEVENSHTEIN_LIMIT+1;
+        maxMatchResource = null;
+        for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
+          if (match.getValue() < maxMatchValue){
+            maxMatchValue = match.getValue();
+            maxMatchResource = match.getKey();
+          }
+        }
+
+        if (maxMatchResource != null){
+          relevantResults.put(maxMatchResource, res.get(maxMatchResource));
+          resourceMatches.remove(maxMatchResource);
+        }
+      } while (maxMatchValue <= LEVENSHTEIN_LIMIT);
     }
-        
     
-    
-    return releventResults;
+    return relevantResults;
   }
   
 }
