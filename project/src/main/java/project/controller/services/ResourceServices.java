@@ -16,8 +16,9 @@ public class ResourceServices {
    * Initializes the application local resource databases.
    */
   public static void init() {
-    // Fill the local resource databases
-    
+    COMPANIES.putAll(SparqlServices.getAllCompanyNamesAndUris());
+    FILMS.putAll(SparqlServices.getAllFilmNamesAndUris());
+    PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
   }
   
   public static Map<String, String> matchCompaniesByName(String name) {
