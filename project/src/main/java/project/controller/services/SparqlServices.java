@@ -1,5 +1,6 @@
 package project.controller.services;
 
+import java.util.Map;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -24,6 +25,22 @@ public class SparqlServices {
     Query query = QueryFactory.create(QNAMES + queryString);
     return QueryExecutionFactory.sparqlService(DBPEDIA_URL, query);
   }
+  
+  // ----------------------------------------------------------- Services for Servlet Initialization
+  
+  public static Map<String, String> getAllFilmNamesAndUris() {
+    return null;
+  }
+  
+  public static Map<String, String> getAllCompanyNamesAndUris() {
+    return null;
+  }
+  
+  public static Map<String, String> getAllPersonNamesAndUris() {
+    return null;
+  }
+  
+  // ---------------------------------------------------------- Services to get Resource Information
     
   public static void getFilmInformation(String uriFilm){
 
@@ -48,5 +65,7 @@ public class SparqlServices {
       query.close();
     }
   }
+  
+  // -------------------------------------------------------- Services to get Resource Relationships
     
 }
