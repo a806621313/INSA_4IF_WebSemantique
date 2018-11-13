@@ -7,6 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import project.controller.actions.Action;
+import project.controller.actions.LoadSuggestionsAction;
+import project.controller.actions.QueryByNameAction;
+import project.controller.actions.QueryByUriAction;
 import project.controller.services.ResourceServices;
 
 @WebServlet(name = "ActionServlet", urlPatterns = {"/ActionServlet"})
@@ -37,17 +41,14 @@ public class ActionServlet extends HttpServlet {
     try {
       String action = request.getParameter("action");
       if ("load-suggestions".equals(action)) {
-        // TODO
-        throw new Exception("load-suggestions not implemented yet");
-        
+        Action servletAction = new LoadSuggestionsAction();
+        servletAction.execute(request, response);
       } else if ("query-by-name".equals(action)) {
-        // TODO
-        throw new Exception("query-by-name not implemented yet");
-        
+        Action servletAction = new QueryByNameAction();
+        servletAction.execute(request, response);
       } else if ("query-by-uri".equals(action)) {
-        // TODO
-        throw new Exception("query-by-uri not implemented yet");
-        
+        Action servletAction = new QueryByUriAction();
+        servletAction.execute(request, response);
       } else {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       }
