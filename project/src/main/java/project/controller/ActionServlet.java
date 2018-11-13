@@ -24,7 +24,7 @@ public class ActionServlet extends HttpServlet {
   }
   
   /**
-   * Handles the HTTP POST method.
+   * Handles the HTTP GET method.
    *
    * @param request servlet request
    * @param response servlet response
@@ -32,13 +32,13 @@ public class ActionServlet extends HttpServlet {
    * @throws IOException if an I/O error occurs
    */
   @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
     try {
       String action = request.getParameter("action");
-      if ("query-suggestion".equals(action)) {
+      if ("load-suggestions".equals(action)) {
         // TODO
-        throw new Exception("query-suggestion not implemented yet");
+        throw new Exception("load-suggestions not implemented yet");
         
       } else if ("query-by-name".equals(action)) {
         // TODO
