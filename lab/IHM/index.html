@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>IF-4-Web Semantique-Project</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <div class="research-layout row pt-3 pb-3" style="background-color: paleturquoise; border-bottom: 2px solid black;">
+           
+            <div class="col-3">
+                <div class="row ml-3">
+                    <i class="fas fa-film fa-2x" style="align-self: center;"></i>
+                    <input class="ml-3 w-75" style="" type="text" id="sujet" placeholder=" 🔍 Search actors,movies..."/>
+                </div>
+            </div>
+            <div class="col-2">
+                <input class="search-button w-75" type="button" id="searchButton" value="Chercher"/> 
+            </div>
+            <div class="col-4"></div>
+            <div class="col-3" style="align-self: center;">
+                IF-4-Web Semantique-Project
+            </div>
+     
+        </div>
+        
+        <div class ="research-result row" style="border-bottom: 2px solid black;">
+            <div class="side-panel col-4 pl-5" style="border-right: 2px solid black; float: left; background-color: paleturquoise;">
+                <div class="movie-name" style="margin-bottom: 7px;">
+                    <p style="font-size: xx-large; margin-bottom: 0;">Eragon</p>
+                    <em class="node-type" style="color: red; font-size: large">Film</em>
+                </div>
+                <div class="sub-category">
+                    Informations about the movie: 
+                    <ul class="list">
+                        <li>Best film ever</li>
+                        <li>With best actors in the world</li>
+                        <li>Movie director: Stefen Fangmeier</li>
+                        <li>Main actor: Ed Speleers</li>
+                    </ul>
+                </div>
+                <div class="sub-category">
+                    Movies by the same director: 
+                </div>
+                <div class="sub-category">
+                    Movies by the same actor: 
+                </div>
+                <div class="sub-category">
+                    Query Suggestion:
+                    <ul class="list">
+                        <li>Hans Zimmer</li>
+                        <li>Dream Works</li>
+                        <li>Resident Evil</li>
+                    </ul>
+                    <div style="float: left;margin-left: 10px;width: 65%;">
+                        <canvas></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="graph-area col-8"></div>
+        </div>
+        
+        <script>
+            function afficher(vars,results){
+                $('#message').html('');
+                var i = 0;
+                var j = 0;
+                var temp;
+                var string = '';
+                for(i = 0;i < results.length;i++){
+                    string += '<p>';
+                    temp = results[i];
+                    for(j = 0; j < vars.length;j++){
+                        string += vars[j] + ' : ' + temp[vars[j]].value + '<br/>';
+                    }
+                    string += '</p>';
+                }
+                if(results.length == 0){
+                    $('#message').append('No Results');
+                }else{
+                    $('#message').append(string);
+                }
+            }
+
+            function chercher() {
+                var sujet = $('#sujet').val();
+                var type = $('#type').val();
+                var select = document.getElementById("objet");
+                var choice = select.selectedIndex;
+                var objet = select.options[choice].value;
+                console.log("In");
+                $('#message').html('Recherche en cours...');
+
+                $.ajax({
+                    url: './ServiceWebSeman',
+                    method: 'POST',
+                    data: {
+                        Action: 'Query',
+                        Sujet: sujet,
+                        Type: type,
+                        Objet: objet
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    // ici votre code...
+                    // 
+                    // si connexion ok, aller sur la page suivante :
+                    //$('#message').html('<b> bonjour </b>');
+                    var reponse = data;
+                    var vars = reponse.head.vars;
+                    var results = reponse.results.bindings;
+                    afficher(vars,results);
+                });
+            }
+
+            $(document).ready(function () {
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#searchButton').on('click', function () {
+                    // affichage pour debugage dans la console javascript du navigateur
+                    console.log('Click sur le bouton "Chercher"');
+                    // appel de la fonction connexion
+                    chercher();
+                });
+            });
+
+        </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    </body>
+</html>
