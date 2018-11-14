@@ -1,10 +1,12 @@
 package project.controller.services;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 
 public class SparqlServices {
@@ -29,7 +31,39 @@ public class SparqlServices {
   // ----------------------------------------------------------- Services for Servlet Initialization
   
   public static Map<String, String> getAllFilmNamesAndUris() {
-    return null;
+     Map<String, String> FilmsNamesUris = new HashMap<>();
+     for (int i=10; i<=30;i++){
+         String condition = "strlen(str(?name))="+i;
+         if(i==10){
+             condition = "strlen(str(?name))<=10";
+         }else if (i==30){
+             condition = "strlen(str(?name))>=30";
+         }
+        QueryExecution qexec = createPrefixedQuery("SELECT distinct ?f ?name WHERE {\n" +
+           "  ?f rdf:type dbo:Film ;\n" +
+           "     dbo:runtime ?r ;\n" +
+           "     rdfs:label ?name .\n" +
+           "     FILTER (lang(?name) = 'en').\n" +
+           "     Filter ("+condition+"). \n" +
+           "}");
+           try {
+               ResultSet result = qexec.execSelect();
+
+               while( result.hasNext() ){
+
+                   QuerySolution elem = result.next();
+                   // System.out.print(elem.getResource("f").getURI().toString()+ " // ");
+                   // System.out.println(elem.getLiteral("name").getString());
+                   FilmsNamesUris.put(elem.getLiteral("name").getString(),elem.getResource("f").getURI().toString()) ;
+               }
+           } catch(Exception e) {
+               System.out.println(e);
+           } finally {
+               qexec.close();
+           }
+     }
+        //System.out.println(FilmsNamesUris.size());
+        return FilmsNamesUris;
   }
   
   public static Map<String, String> getAllCompanyNamesAndUris() {
