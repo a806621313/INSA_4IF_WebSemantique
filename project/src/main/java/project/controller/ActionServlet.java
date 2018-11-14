@@ -1,6 +1,8 @@
 package project.controller;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,7 +56,7 @@ public class ActionServlet extends HttpServlet {
       }
     } catch (Exception ex) {
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
-      getServletContext().log("Exception in " + getClass().getName() + " :\n" + ex.getMessage());
+      Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
     }
   }
 

@@ -67,7 +67,28 @@ public class SparqlServices {
   }
   
   public static Map<String, String> getAllCompanyNamesAndUris() {
-    return null;
+    QueryExecution qexec = createPrefixedQuery("SELECT ?uri ?name WHERE {\n"
+                + "  ?uri rdf:type dbo:Company ;\n"
+                + "     rdf:type ?o ;\n"
+                + "     rdfs:label ?name .\n"
+                + "  FILTER regex(str(?o), \"WikicatFilmProductionCompaniesOf\").\n"
+                + "  FILTER (lang(?name)='en')\n"
+                + "}");
+
+        ResultSet results = qexec.execSelect();
+
+        Map<String, String> films = new HashMap<String, String>();
+
+        String uri = "";
+        String name = "";
+
+        for (; results.hasNext();) {
+            QuerySolution elem = results.nextSolution();
+            uri = elem.getResource("uri").getURI().toString();
+            name = elem.getLiteral("name").getString();
+            films.put(name, uri);
+        }
+        return films;
   }
   
   public static Map<String, String> getAllPersonNamesAndUris() {
@@ -144,7 +165,5 @@ public class SparqlServices {
       query.close();
     }
   }*/
-  
-  // -------------------------------------------------------- Services to get Resource Relationships
-    
+    // -------------------------------------------------------- Services to get Resource Relationships
 }
