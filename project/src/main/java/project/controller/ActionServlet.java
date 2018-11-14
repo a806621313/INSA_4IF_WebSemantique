@@ -21,12 +21,13 @@ public class ActionServlet extends HttpServlet {
   /**
    * Initializes the Servlet before it accepts requests.
    * 
-   * @param config the servlet's configuration and initialization parameters
    * @throws ServletException if a servlet-specific error occurs
    */
   @Override
-  public void init(ServletConfig config) throws ServletException {
+  public void init() throws ServletException {
+    Logger.getLogger(getClass().getName()).log(Level.INFO, "INIT START");
     ResourceServices.init();
+    Logger.getLogger(getClass().getName()).log(Level.INFO, "INIT DONE");
   }
   
   /**

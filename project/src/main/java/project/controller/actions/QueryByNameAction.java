@@ -20,42 +20,24 @@ public class QueryByNameAction implements Action {
   public void execute(HttpServletRequest request, HttpServletResponse response) {
     String query = request.getParameter("query");
     
-    Map<String, String> companies = ResourceServices.matchCompaniesByName(query);
-    Map<String, String> films = ResourceServices.matchFilmsByName(query);
-    Map<String, String> persons = ResourceServices.matchPersonsByName(query);
+    Map<String, String> resources = ResourceServices.matchResourcesByName(query);
     
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
     
-    int numberOfResults = companies.size() + films.size() + persons.size();
-    
     try {
       JsonObject container = new JsonObject();
-      if(numberOfResults > 0) {
+      if(resources.size() > 0) {
         container.addProperty("responseType", "queryResults");
       } else {
         container.addProperty("responseType", "noResult");
       }
       JsonArray suggestions = new JsonArray();
-      for (Map.Entry<String, String> resource : companies.entrySet()) {
+      for (Map.Entry<String, String> res : resources.entrySet()) {
         JsonObject suggestion = new JsonObject();
-        suggestion.addProperty("resourceName", resource.getKey());
-        suggestion.addProperty("resourceUri", resource.getValue());
-        suggestion.addProperty("resourceType", "company");
-        suggestions.add(suggestion);
-      }
-      for (Map.Entry<String, String> resource : films.entrySet()) {
-        JsonObject suggestion = new JsonObject();
-        suggestion.addProperty("resourceName", resource.getKey());
-        suggestion.addProperty("resourceUri", resource.getValue());
-        suggestion.addProperty("resourceType", "film");
-        suggestions.add(suggestion);
-      }
-      for (Map.Entry<String, String> resource : persons.entrySet()) {
-        JsonObject suggestion = new JsonObject();
-        suggestion.addProperty("resourceName", resource.getKey());
-        suggestion.addProperty("resourceUri", resource.getValue());
-        suggestion.addProperty("resourceType", "person");
+        suggestion.addProperty("resourceName", res.getKey());
+        suggestion.addProperty("resourceUri", res.getValue());
+        suggestion.addProperty("resourceType", ResourceServices.getCategory(res.getValue()));
         suggestions.add(suggestion);
       }
       container.add("responseContent", suggestions);

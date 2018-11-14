@@ -21,7 +21,8 @@ public class SparqlServices {
             + "PREFIX dbo: <http://dbpedia.org/ontology/>\n"
             + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
             + "PREFIX dbc: <http://dbpedia.org/resource/Category:>\n"
-            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n";
+            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+            + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n";
 
   private static QueryExecution createPrefixedQuery (String queryString){
         Query query = QueryFactory.create(QNAMES + queryString);
@@ -30,14 +31,14 @@ public class SparqlServices {
 
     // ----------------------------------------------------------- Services for Servlet Initialization
     public static Map<String, String> getAllFilmNamesAndUris() {
-        Map<String, String> FilmsNamesUris = new HashMap<>();
-     for (int i=10; i<=30;i++){
-         String condition = "strlen(str(?name))="+i;
-         if(i==10){
-                condition = "strlen(str(?name))<=10";
-         }else if (i==30){
-                condition = "strlen(str(?name))>=30";
-            }
+      Map<String, String> films = new HashMap<String, String>();
+      for (int i=10; i<=30;i++){
+        String condition = "strlen(str(?name)) = " + i;
+        if(i==10){
+          condition = "strlen(str(?name)) <= 10";
+        }else if (i==30){
+          condition = "strlen(str(?name)) >= 30";
+        }
         QueryExecution qexec = createPrefixedQuery("SELECT distinct ?f ?name WHERE {\n" +
            "  ?f rdf:type dbo:Film ;\n" +
            "     dbo:runtime ?r ;\n" +
@@ -45,24 +46,23 @@ public class SparqlServices {
            "     FILTER (lang(?name) = 'en').\n" +
            "     Filter ("+condition+"). \n" +
            "}");
-            try {
-                ResultSet result = qexec.execSelect();
+          try {
+              ResultSet result = qexec.execSelect();
 
-               while( result.hasNext() ){
-
-                    QuerySolution elem = result.next();
-                    // System.out.print(elem.getResource("f").getURI().toString()+ " // ");
-                    // System.out.println(elem.getLiteral("name").getString());
-                   FilmsNamesUris.put(elem.getLiteral("name").getString(),elem.getResource("f").getURI().toString()) ;
-                }
-           } catch(Exception e) {
-                System.out.println(e);
-            } finally {
-                qexec.close();
+             while (result.hasNext() ){
+                QuerySolution elem = result.next();
+                // System.out.print(elem.getResource("f").getURI().toString()+ " // ");
+                // System.out.println(elem.getLiteral("name").getString());
+               films.put(elem.getLiteral("name").getString(),elem.getResource("f").getURI().toString()) ;
             }
+          } catch(Exception e) {
+              System.out.println(e);
+          } finally {
+            qexec.close();
+          }
         }
         //System.out.println(FilmsNamesUris.size());
-        return FilmsNamesUris;
+        return films;
     }
 
     public static Map<String, String> getAllCompanyNamesAndUris() {
@@ -91,7 +91,7 @@ public class SparqlServices {
     }
 
     public static Map<String, String> getAllPersonNamesAndUris() {
-        return null;
+        return getAllCompanyNamesAndUris(); // ! for test purposes
     }
 
     // ---------------------------------------------------------- Services to get Resource Information
