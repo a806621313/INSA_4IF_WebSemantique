@@ -53,7 +53,7 @@ function renderer(canvasId) {
         context.fillStyle = 'black';
         var rotation = Math.acos((Math.abs(pt1.y-pt2.y))/(Math.sqrt(Math.pow((pt1.y-pt2.y),2)+Math.pow((pt1.x-pt2.x),2))))
         context.save();
-        context.translate((pt1.x + pt2.x) / 2,(pt1.y + pt2.y) / 2 + 6);
+        context.translate((pt1.x + pt2.x) / 2,(pt1.y + pt2.y) / 2);
         if(pt2.x>=pt1.x && pt2.y>=pt1.y){          //en bas à droite
           context.rotate(-rotation+Math.PI*0.5);
         }
