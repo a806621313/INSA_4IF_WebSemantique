@@ -1,6 +1,8 @@
 package project.controller;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,13 +42,13 @@ public class ActionServlet extends HttpServlet {
     throws ServletException, IOException {
     try {
       String action = request.getParameter("action");
-      if ("load-suggestions".equals(action)) {
+      if ("loadSuggestions".equals(action)) {
         Action servletAction = new LoadSuggestionsAction();
         servletAction.execute(request, response);
-      } else if ("query-by-name".equals(action)) {
+      } else if ("queryByName".equals(action)) {
         Action servletAction = new QueryByNameAction();
         servletAction.execute(request, response);
-      } else if ("query-by-uri".equals(action)) {
+      } else if ("queryByUri".equals(action)) {
         Action servletAction = new QueryByUriAction();
         servletAction.execute(request, response);
       } else {
@@ -54,7 +56,7 @@ public class ActionServlet extends HttpServlet {
       }
     } catch (Exception ex) {
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
-      getServletContext().log("Exception in " + getClass().getName() + " :\n" + ex.getMessage());
+      Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
     }
   }
 
