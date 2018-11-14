@@ -19,24 +19,23 @@ function loadSuggestions() {
 
 function queryByName() {
   var action = "queryByName";
-  var query = $('#research-bar').val();
+  var query = $('#searchBar').val();
   
-  $("search-button").on("click", function(){
-    $.ajax({
-      url: './ActionServlet',
-      method: 'GET',
-      data: {
-        action: action,
-        query: query
-      },
-      dataType: 'json'
-    }).done(function (data) {
-      if (data.responseType === "queryResult") {
-        for (content in data.responseContent) {
-          $('#query-result').append("<li>" + content.ressourceName + " " + content.ressourceType + "</li>");
-        }
+  $.ajax({
+    url: './ActionServlet',
+    method: 'GET',
+    data: {
+      action: action,
+      query: query
+    },
+    dataType: 'json'
+  }).done(function (data) {
+    if (data.responseType === "queryResults") {
+      for (var i=0; i<data.responseContent.length; i++) {
+        alert(data.responseContent[i].resourceName);
+        $('#query-result').append("<li>" + data.responseContent[i].resourceName + " " + data.responseContent[i].resourceType + "</li>");
       }
-    });
+    }
   });
 }
 
