@@ -28,6 +28,18 @@ SELECT DISTINCT ?f WHERE {
 ORDER BY ?f
 ```
 
+### Actors
+
+```
+SELECT DISTINCT count(?a) WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:starring ?a .
+  ?a rdfs:label ?l .
+  FILTER(lang(?l)='en') .
+  FILTER(strlen(str(?l)) < 6)
+}
+```
+
 ## Relationships
 
 ### Films and the Company that produced each Film
