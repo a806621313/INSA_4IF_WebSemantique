@@ -14,7 +14,7 @@ import project.controller.services.ResourceServices;
 
 public class LoadSuggestionsAction implements Action {
   
-  private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  private final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
   @Override
   public void execute(HttpServletRequest request, HttpServletResponse response) {

@@ -19,46 +19,15 @@ public class ResourceServices {
   private final static Map<String, String> PERSONS = new LinkedHashMap<String, String>();
   
   private final static int LEVENSHTEIN_LIMIT = 3;
-  private final static int NUMBER_OF_RANDOM = 3;
+  private final static int NUMBER_OF_SUGGESTIONS = 3;
   
   /**
    * Initializes the application local resource databases.
    */
   public static void init() {
-    //COMPANIES.putAll(SparqlServices.getAllCompanyNamesAndUris());
-    //FILMS.putAll(SparqlServices.getAllFilmNamesAndUris());
-    //PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
-    
-    COMPANIES.put("Disney", "d");
-    COMPANIES.put("Pixar", "d");
-    COMPANIES.put("DreamWorks", "d");
-    COMPANIES.put("Twenty Century Fox", "d");
-    COMPANIES.put("Marvel", "d");
-    COMPANIES.put("Warner Bros", "d");
-    COMPANIES.put("Gaumont", "d");
-    COMPANIES.put("Pathe", "d");
-    COMPANIES.put("Netflix", "d");
-    COMPANIES.put("Paramount Pictures", "d");
-    
-    FILMS.put("FFDisney", "d");
-    FILMS.put("FFPixar", "d");
-    FILMS.put("FFDreamWorks", "d");
-    FILMS.put("FFTwenty Century Fox", "d");
-    FILMS.put("FFMarvel", "d");
-    FILMS.put("FFWarner Bros", "d");
-    FILMS.put("FFGaumont", "d");
-    FILMS.put("FFFFNetflix", "d");
-    FILMS.put("Paramount Pictures", "d");
-    
-    PERSONS.put("PPDisney", "d");
-    PERSONS.put("PPPixar", "d");
-    PERSONS.put("PPreamWorks", "d");
-    PERSONS.put("PPTwenty Century Fox", "d");
-    PERSONS.put("PPFMarvel", "d");
-    PERSONS.put("PP Bros", "d");
-    PERSONS.put("PPFPPGaumont", "d");
-    PERSONS.put("PPFFFNetflix", "d");
-    PERSONS.put("PParamount Pictures", "d");
+    COMPANIES.putAll(SparqlServices.getAllCompanyNamesAndUris());
+    FILMS.putAll(SparqlServices.getAllFilmNamesAndUris());
+    PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
   }
   
   public static Map<String, String> getRandomCompanies() {
@@ -90,11 +59,10 @@ public class ResourceServices {
     List<Map.Entry<String, String>> listMatch =new ArrayList<Map.Entry<String, String>>(res.entrySet());
     Random random = new Random();
     
-    for(int i = 0; i<NUMBER_OF_RANDOM; i++)
-    {
+    for (int i = 0; i < NUMBER_OF_SUGGESTIONS; i++) {
       int index = random.nextInt(listMatch.size());
       Map.Entry<String,String> result = listMatch.get(index);
-      randomResults.put(result.getKey(),result.getValue());
+      randomResults.put(result.getKey(), result.getValue());
       listMatch.remove(index);
     }
     
@@ -133,16 +101,14 @@ public class ResourceServices {
       });
       
       for (Map.Entry<String, Integer> match : listMatch) {
-        if(match.getValue() == 0)
-          break;
-        
+        if(match.getValue() == 0) break;
         relevantResults.put(match.getKey(), res.get(match.getKey()));
       }
     }
     // If no resource name matches the query, compute Levenshtein distances
     else {
       for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
-        int minDistance = LEVENSHTEIN_LIMIT+1;
+        int minDistance = LEVENSHTEIN_LIMIT + 1;
         for(String resourceWord : match.getKey().split("\\s+")){
           for (String queryWord : queryWords) {
             int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
@@ -161,14 +127,11 @@ public class ResourceServices {
       });
       
       for (Map.Entry<String, Integer> match : listMatch) {
-        if(match.getValue() > LEVENSHTEIN_LIMIT)
-          break;
-        
+        if(match.getValue() > LEVENSHTEIN_LIMIT) break;
         relevantResults.put(match.getKey(), res.get(match.getKey()));
       }
     }
-    
-    
+        
     return relevantResults;
   }
   
