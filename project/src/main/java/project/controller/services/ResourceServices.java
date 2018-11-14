@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class ResourceServices {
   
@@ -18,6 +19,7 @@ public class ResourceServices {
   private final static Map<String, String> PERSONS = new LinkedHashMap<String, String>();
   
   private final static int LEVENSHTEIN_LIMIT = 3;
+  private final static int NUMBER_OF_RANDOM = 3;
   
   /**
    * Initializes the application local resource databases.
@@ -28,8 +30,16 @@ public class ResourceServices {
     PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
   }
   
-  public static Map<String, String> getRandomResources() {
-    return null;
+  public static Map<String, String> getRandomCompanies() {
+    return getRandomResources(COMPANIES);
+  }
+  
+  public static Map<String, String> getRandomFilms() {
+    return getRandomResources(FILMS);
+  }
+  
+  public static Map<String, String> getRandomPersons() {
+    return getRandomResources(PERSONS);
   }
   
   public static Map<String, String> matchCompaniesByName(String name) {
@@ -42,6 +52,22 @@ public class ResourceServices {
   
   public static Map<String, String> matchPersonsByName(String name) {
     return matchResourcesByName(name, PERSONS);
+  }
+  
+  public static Map<String, String> getRandomResources(Map<String, String> res) {
+    Map<String, String> randomResults = new LinkedHashMap<String,String>();
+    List<Map.Entry<String, String>> listMatch =new ArrayList<Map.Entry<String, String>>(res.entrySet());
+    Random random = new Random();
+    
+    for(int i = 0; i<NUMBER_OF_RANDOM; i++)
+    {
+      int index = random.nextInt(listMatch.size());
+      Map.Entry<String,String> result = listMatch.get(index);
+      randomResults.put(result.getKey(),result.getValue());
+      listMatch.remove(index);
+    }
+    
+    return randomResults;
   }
 
   private static Map<String, String> matchResourcesByName(String name, Map<String, String> res) {
