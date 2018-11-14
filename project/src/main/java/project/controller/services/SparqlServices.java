@@ -41,7 +41,52 @@ public class SparqlServices {
   }
   
   // ---------------------------------------------------------- Services to get Resource Information
-    
+  
+  public static boolean isCompany(String uri) {
+    return false;
+  }
+  
+  public static boolean isFilm(String uri) {
+    return false;
+  }
+  
+  public static boolean isActor(String uri) {
+    return false;
+  }
+  
+  public static boolean isFilmDirector(String uri) {
+    return false;
+  }
+  
+  public static boolean isFilmProducer(String uri) {
+    return false;
+  }
+  
+  public static boolean isFilmMusicComposer(String uri) {
+    return false;
+  }
+  
+  public static int numberOfEmployees(String uri) {
+    return 0;
+  }
+  
+  public static int numberOfFilmsProducedByThisStudio(String uri) {
+    return 0;
+  }
+  
+  public static int numberOfFilmsDistributedByThisStudio(String uri) {
+    return 0;
+  }
+  
+  public static Map<String, String> majorFilmsProducedByThisStudio(String uri) {
+    return null;
+  }
+  
+  public static Map<String, String> majorFilmsDistributedByThisStudio(String uri) {
+    return null;
+  }
+  
+  /*
   public static void getFilmInformation(String uriFilm){
 
     String sparqlQuery =
@@ -64,7 +109,7 @@ public class SparqlServices {
     } finally {
       query.close();
     }
-  }
+  }*/
   
   // -------------------------------------------------------- Services to get Resource Relationships
     

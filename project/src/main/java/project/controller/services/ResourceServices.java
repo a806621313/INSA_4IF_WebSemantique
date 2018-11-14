@@ -24,6 +24,10 @@ public class ResourceServices {
     PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
   }
   
+  public static Map<String, String> getRandomResources() {
+    return null;
+  }
+  
   public static Map<String, String> matchCompaniesByName(String name) {
     return matchResourcesByName(name, COMPANIES);
   }
