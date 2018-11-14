@@ -51,18 +51,43 @@ function renderer(canvasId) {
         context.lineTo(pt2.x, pt2.y)
         context.stroke()
         context.fillStyle = 'black';
-        context.fillText(text, (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2 + 6)
+        var rotation = Math.acos((Math.abs(pt1.y-pt2.y))/(Math.sqrt(Math.pow((pt1.y-pt2.y),2)+Math.pow((pt1.x-pt2.x),2))))
+        context.save();
+        context.translate((pt1.x + pt2.x) / 2,(pt1.y + pt2.y) / 2 + 6);
+        if(pt2.x>=pt1.x && pt2.y>=pt1.y){          //en bas à droite
+          context.rotate(-rotation+Math.PI*0.5);
+        }
+        else if(pt2.x<=pt1.x && pt2.y>=pt1.y){     //en bas à gauche
+          context.rotate(rotation-Math.PI*0.5);
+        }
+        else if(pt2.x<=pt1.x && pt2.y<=pt1.y){     //en haut à gauche
+          context.rotate(-rotation+Math.PI*0.5);
+        }
+        else if(pt2.x>=pt1.x && pt2.y<=pt1.y){     //en haut à droite
+          context.rotate(rotation-Math.PI*0.5);
+        }
+        
+        context.fillText(text, 0, -8);
+        context.restore();
       })
 
       // node: {mass:#, p:{x,y}, name:"", data:{name:"", uri:"", radius:#, color:#}}
       // pt:   {x:#, y:#}  node position in screen coords
       particleSystem.eachNode(function(node, pt) {
         // metrics
-        var text = node.data.name
+        var text = node.data.name;
+        var words = text.split(" ");
         context.font = '14pt Calibri';
         context.textAlign = 'center';
-        var textMetrics = context.measureText(text);
-        node.data.radius = (textMetrics.width) / 2 + 8;
+        var textMetrics = node.data.radius;
+        words.forEach(word => {
+          var measure = context.measureText(word);
+          if(textMetrics<measure.width)
+          {
+            textMetrics = measure.width;
+          }
+        });
+        node.data.radius = (textMetrics) / 2 + 8;
         
         // drawing
         context.beginPath();
@@ -73,7 +98,16 @@ function renderer(canvasId) {
         context.strokeStyle = 'black';
         context.stroke();
         context.fillStyle = 'black';
-        context.fillText(text, pt.x, pt.y + 6)
+        var i = 0
+        words.forEach(word => {
+          if (words.length%2==0){
+            context.fillText(word, pt.x, pt.y + 12*i)
+          }
+          else{
+            context.fillText(word, pt.x, pt.y + 12*i + 6)
+          }
+          i++;
+        });
       })    			
     },
   }
