@@ -1,9 +1,9 @@
 package project.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,9 +25,7 @@ public class ActionServlet extends HttpServlet {
    */
   @Override
   public void init() throws ServletException {
-    Logger.getLogger(getClass().getName()).log(Level.INFO, "INIT START");
     ResourceServices.init();
-    Logger.getLogger(getClass().getName()).log(Level.INFO, "INIT DONE");
   }
   
   /**

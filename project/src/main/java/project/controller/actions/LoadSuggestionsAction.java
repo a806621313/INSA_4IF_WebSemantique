@@ -27,7 +27,11 @@ public class LoadSuggestionsAction implements Action {
     
     try {
       JsonObject container = new JsonObject();
-      container.addProperty("responseType", "suggestions");
+      if (companies.size() + films.size() + persons.size() > 0) {
+        container.addProperty("responseType", "suggestions");
+      } else {
+        container.addProperty("responseType", "error");
+      }
       JsonArray suggestions = new JsonArray();
       for (Map.Entry<String, String> resource : companies.entrySet()) {
         JsonObject suggestion = new JsonObject();
