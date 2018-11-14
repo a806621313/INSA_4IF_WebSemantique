@@ -42,13 +42,13 @@ public class ActionServlet extends HttpServlet {
     throws ServletException, IOException {
     try {
       String action = request.getParameter("action");
-      if ("load-suggestions".equals(action)) {
+      if ("loadSuggestions".equals(action)) {
         Action servletAction = new LoadSuggestionsAction();
         servletAction.execute(request, response);
-      } else if ("query-by-name".equals(action)) {
+      } else if ("queryByName".equals(action)) {
         Action servletAction = new QueryByNameAction();
         servletAction.execute(request, response);
-      } else if ("query-by-uri".equals(action)) {
+      } else if ("queryByUri".equals(action)) {
         Action servletAction = new QueryByUriAction();
         servletAction.execute(request, response);
       } else {

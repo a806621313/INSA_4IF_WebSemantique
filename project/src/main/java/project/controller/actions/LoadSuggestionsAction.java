@@ -18,9 +18,9 @@ public class LoadSuggestionsAction implements Action {
 
   @Override
   public void execute(HttpServletRequest request, HttpServletResponse response) {
-    Map<String, String> companies = null;//ResourceServices.getRandomCompanies();
-    Map<String, String> films = null;//ResourceServices.getRandomFilms();
-    Map<String, String> persons = null;//ResourceServices.getRandomPersons();
+    Map<String, String> companies = ResourceServices.getRandomCompanies();
+    Map<String, String> films = ResourceServices.getRandomFilms();
+    Map<String, String> persons = ResourceServices.getRandomPersons();
     
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
@@ -31,9 +31,23 @@ public class LoadSuggestionsAction implements Action {
       JsonArray suggestions = new JsonArray();
       for (Map.Entry<String, String> resource : companies.entrySet()) {
         JsonObject suggestion = new JsonObject();
-        suggestion.addProperty("", "");
-        suggestion.addProperty("", "");
-        suggestion.addProperty("", "");
+        suggestion.addProperty("resourceName", resource.getKey());
+        suggestion.addProperty("resourceUri", resource.getValue());
+        suggestion.addProperty("resourceType", "company");
+        suggestions.add(suggestion);
+      }
+      for (Map.Entry<String, String> resource : films.entrySet()) {
+        JsonObject suggestion = new JsonObject();
+        suggestion.addProperty("resourceName", resource.getKey());
+        suggestion.addProperty("resourceUri", resource.getValue());
+        suggestion.addProperty("resourceType", "film");
+        suggestions.add(suggestion);
+      }
+      for (Map.Entry<String, String> resource : persons.entrySet()) {
+        JsonObject suggestion = new JsonObject();
+        suggestion.addProperty("resourceName", resource.getKey());
+        suggestion.addProperty("resourceUri", resource.getValue());
+        suggestion.addProperty("resourceType", "person");
         suggestions.add(suggestion);
       }
       container.add("responseContent", suggestions);

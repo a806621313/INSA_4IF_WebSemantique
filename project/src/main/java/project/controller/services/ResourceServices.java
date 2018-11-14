@@ -25,9 +25,40 @@ public class ResourceServices {
    * Initializes the application local resource databases.
    */
   public static void init() {
-    COMPANIES.putAll(SparqlServices.getAllCompanyNamesAndUris());
-    FILMS.putAll(SparqlServices.getAllFilmNamesAndUris());
-    PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
+    //COMPANIES.putAll(SparqlServices.getAllCompanyNamesAndUris());
+    //FILMS.putAll(SparqlServices.getAllFilmNamesAndUris());
+    //PERSONS.putAll(SparqlServices.getAllPersonNamesAndUris());
+    
+    COMPANIES.put("Disney", "d");
+    COMPANIES.put("Pixar", "d");
+    COMPANIES.put("DreamWorks", "d");
+    COMPANIES.put("Twenty Century Fox", "d");
+    COMPANIES.put("Marvel", "d");
+    COMPANIES.put("Warner Bros", "d");
+    COMPANIES.put("Gaumont", "d");
+    COMPANIES.put("Pathe", "d");
+    COMPANIES.put("Netflix", "d");
+    COMPANIES.put("Paramount Pictures", "d");
+    
+    FILMS.put("FFDisney", "d");
+    FILMS.put("FFPixar", "d");
+    FILMS.put("FFDreamWorks", "d");
+    FILMS.put("FFTwenty Century Fox", "d");
+    FILMS.put("FFMarvel", "d");
+    FILMS.put("FFWarner Bros", "d");
+    FILMS.put("FFGaumont", "d");
+    FILMS.put("FFFFNetflix", "d");
+    FILMS.put("Paramount Pictures", "d");
+    
+    PERSONS.put("PPDisney", "d");
+    PERSONS.put("PPPixar", "d");
+    PERSONS.put("PPreamWorks", "d");
+    PERSONS.put("PPTwenty Century Fox", "d");
+    PERSONS.put("PPFMarvel", "d");
+    PERSONS.put("PP Bros", "d");
+    PERSONS.put("PPFPPGaumont", "d");
+    PERSONS.put("PPFFFNetflix", "d");
+    PERSONS.put("PParamount Pictures", "d");
   }
   
   public static Map<String, String> getRandomCompanies() {
