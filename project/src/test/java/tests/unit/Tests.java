@@ -14,7 +14,7 @@ public class Tests {
     System.out.println(StringUtils.getLevenshteinDistance("abcdefg", "abcdefghijklm"));
     
     ResourceServices.init();
-    Map<String,String> result = ResourceServices.matchCompaniesByName("paramonnt");
+    Map<String,String> result = ResourceServices.matchCompaniesByName("disne para pict");
     
     
     for (Map.Entry<String, String> entry : result.entrySet()) {

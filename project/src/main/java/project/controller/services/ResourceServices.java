@@ -1,8 +1,12 @@
 package project.controller.services;
 
+import java.util.ArrayList;
 import project.utils.StringUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ResourceServices {
   
@@ -42,6 +46,7 @@ public class ResourceServices {
 
   private static Map<String, String> matchResourcesByName(String name, Map<String, String> res) {
     Map<String, String> relevantResults = new LinkedHashMap<String, String>();
+    List<Map.Entry<String, Integer>> listMatch;
     String[] queryWords = name.trim().split("\\s+");  // Each word composing the name query
     
     // Temporary Map to save the distance between the query and the resources
@@ -63,24 +68,19 @@ public class ResourceServices {
     
     if (queryWordsMatchResources) {
       // Sort the resources by relevance (number of matches)
-      int maxMatchValue;
-      String maxMatchResource;
-      do {
-        maxMatchValue = 0;
-        maxMatchResource = null;
-
-        for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
-          if (match.getValue() > maxMatchValue){
-            maxMatchValue = match.getValue();
-            maxMatchResource = match.getKey();
-          }
+      listMatch =new ArrayList<Map.Entry<String, Integer>>(resourceMatches.entrySet());
+      Collections.sort(listMatch, new Comparator<Map.Entry<String, Integer>>() {
+        public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b){
+          return b.getValue().compareTo(a.getValue());
         }
-
-        if (maxMatchResource != null){
-          relevantResults.put(maxMatchResource, res.get(maxMatchResource));
-          resourceMatches.remove(maxMatchResource);
-        }
-      } while(maxMatchValue != 0);
+      });
+      
+      for (Map.Entry<String, Integer> match : listMatch) {
+        if(match.getValue() == 0)
+          break;
+        
+        relevantResults.put(match.getKey(), res.get(match.getKey()));
+      }
     }
     // If no resource name matches the query, compute Levenshtein distances
     else {
@@ -96,24 +96,21 @@ public class ResourceServices {
       }
 
       // Sort the resources by relevance (lowest Levenshtein distance)
-      int maxMatchValue;
-      String maxMatchResource;
-      do {
-        maxMatchValue = LEVENSHTEIN_LIMIT+1;
-        maxMatchResource = null;
-        for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
-          if (match.getValue() < maxMatchValue){
-            maxMatchValue = match.getValue();
-            maxMatchResource = match.getKey();
-          }
+      listMatch = new ArrayList<Map.Entry<String, Integer>>(resourceMatches.entrySet());
+      Collections.sort(listMatch, new Comparator<Map.Entry<String, Integer>>() {
+        public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b){
+          return a.getValue().compareTo(b.getValue());
         }
-
-        if (maxMatchResource != null){
-          relevantResults.put(maxMatchResource, res.get(maxMatchResource));
-          resourceMatches.remove(maxMatchResource);
-        }
-      } while (maxMatchValue <= LEVENSHTEIN_LIMIT);
+      });
+      
+      for (Map.Entry<String, Integer> match : listMatch) {
+        if(match.getValue() > LEVENSHTEIN_LIMIT)
+          break;
+        
+        relevantResults.put(match.getKey(), res.get(match.getKey()));
+      }
     }
+    
     
     return relevantResults;
   }
