@@ -102,7 +102,16 @@ public class SparqlServices {
   }
   
   public static boolean isFilm(String uri) {
-    return false;
+    QueryExecution qexec = createPrefixedQuery("SELECT ?r WHERE {\n" +
+        "  <"+uri+"> rdf:type dbo:Film ;\n" +
+        "  dbo:runtime ?r  .\n" +
+        "}");
+        
+    ResultSet result = qexec.execSelect();
+    boolean isfilm=result.hasNext();
+  // System.out.println(isfilm);
+    return isfilm;
+          
   }
   
   public static boolean isActor(String uri) {
@@ -139,6 +148,24 @@ public class SparqlServices {
   
   public static Map<String, String> majorFilmsDistributedByThisStudio(String uri) {
     return null;
+  }
+  
+  public static String getFilmBudget(String uri){
+      String budget ="";
+      QueryExecution qexec = createPrefixedQuery("SELECT ?b WHERE {\n" +
+        "    <http://dbpedia.org/resource/Cars_(film)> dbo:budget ?b .\n" +
+        "}");
+        
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+
+        QuerySolution elem = result.next();
+        budget += elem.getLiteral("b").getString() + " ";
+        String currencyUri = elem.getLiteral("b").getDatatypeURI();
+        budget += currencyUri.substring(currencyUri.lastIndexOf('/') + 1).trim();
+    }
+    System.out.println(budget);
+    return budget;
   }
   
   /*
