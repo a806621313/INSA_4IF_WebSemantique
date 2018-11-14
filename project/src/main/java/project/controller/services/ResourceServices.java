@@ -19,7 +19,7 @@ public class ResourceServices {
   private final static Map<String, String> PERSONS = new LinkedHashMap<String, String>();
   
   private final static int LEVENSHTEIN_LIMIT = 3;
-  private final static int NUMBER_OF_RANDOM = 3;
+  private final static int NUMBER_OF_SUGGESTIONS = 3;
   
   /**
    * Initializes the application local resource databases.
@@ -59,10 +59,10 @@ public class ResourceServices {
     List<Map.Entry<String, String>> listMatch =new ArrayList<Map.Entry<String, String>>(res.entrySet());
     Random random = new Random();
     
-    for (int i = 0; i<NUMBER_OF_RANDOM; i++) {
+    for (int i = 0; i < NUMBER_OF_SUGGESTIONS; i++) {
       int index = random.nextInt(listMatch.size());
       Map.Entry<String,String> result = listMatch.get(index);
-      randomResults.put(result.getKey(),result.getValue());
+      randomResults.put(result.getKey(), result.getValue());
       listMatch.remove(index);
     }
     
@@ -108,7 +108,7 @@ public class ResourceServices {
     // If no resource name matches the query, compute Levenshtein distances
     else {
       for (Map.Entry<String, Integer> match : resourceMatches.entrySet()){
-        int minDistance = LEVENSHTEIN_LIMIT+1;
+        int minDistance = LEVENSHTEIN_LIMIT + 1;
         for(String resourceWord : match.getKey().split("\\s+")){
           for (String queryWord : queryWords) {
             int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
