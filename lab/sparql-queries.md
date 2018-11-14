@@ -58,6 +58,19 @@ SELECT ?f ?c WHERE {
 }
 ```
 
+### Actors
+
+```
+SELECT DISTINCT count(?a) WHERE {
+  ?f rdf:type dbo:Film ;
+     dbo:starring ?a .
+  ?a rdfs:label ?l .
+  FILTER(lang(?l)='en') .
+  FILTER(strlen(str(?l)) < 6)
+}
+
+```
+
 ### Actors of a Film
 
 ```
