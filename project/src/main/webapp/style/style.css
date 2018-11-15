@@ -1,0 +1,26 @@
+.search-bar-layout {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    background-color: #171a1d;
+    border-bottom: solid #ced4da 2px;
+}
+
+.project-title {
+    align-self: center;
+    color: #ced4da;
+}
+
+.card-body {
+    padding: 8px;
+}
+
+.form-control-borderless {
+    border: none;
+}
+
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

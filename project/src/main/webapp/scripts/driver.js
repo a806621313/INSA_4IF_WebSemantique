@@ -7,8 +7,14 @@ $(document).ready(function() {
   $("#search-button").on("click", function() {
     queryByName($("#search-bar").val());
   });
+  
+  $("#search-bar").on("keyup", function(e) {
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      queryByName($("#search-bar").val());
+    }
+  })
 });
-
 
 function loadSuggestions() {
   $.ajax({
