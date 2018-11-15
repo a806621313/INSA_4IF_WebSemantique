@@ -52,9 +52,39 @@ function queryByName(name) {
     clearGraph();
     if (data.responseType === "queryResults") {
       appendTitle($("#query-results"), "Search results");
+      var numberOfFilms = 0;
+      var numberOfCompanies = 0;
+      var numberOfPersons = 0;
+      var numberOfResults = data.responseContent.length;
       for (var i=0; i<data.responseContent.length; i++) {
-        appendQuerySuggestion($("#query-results"), data.responseContent[i]);
+        var result = data.responseContent[i];
+        appendQuerySuggestion($("#query-results"), result);
+        if (result.resourceType === "film") {
+          numberOfFilms++;
+        }
+        if (result.resourceType === "company") {
+          numberOfCompanies++;
+        }
+        if (result.resourceType === "person") {
+          numberOfPersons++;
+        }
       }
+      var resultAnalysis = {
+        nodes: {
+          nresults: {name: "Results (" + numberOfResults + ")", color: "#171a1d", uri: "", radius: 0},
+          nfilms: {name: "Films (" + numberOfFilms + ")", color: "#004085", uri: "", radius: 0},
+          ncompanies: {name: "Companies (" + numberOfCompanies +")", color: "#155724", uri: "", radius: 0},
+          npersons: {name: "Persons (" + numberOfPersons + ")", color: "#822224", uri: "", radius: 0}
+        },
+        edges: {
+          nresults: {
+            nfilms: {type: ""},
+            ncompanies: {type: ""},
+            npersons: {type: ""}
+          }
+        }
+      };
+      updateGraph(resultAnalysis);
     } else if (data.responseType === "noResult") {
       appendErrorMessage($("#query-results"), "Sorry, no results found :(");
     } else {
@@ -64,6 +94,9 @@ function queryByName(name) {
 }
 
 function queryByUri(uri) {
+  
+  alert("URI request : " + uri);
+  
   $.ajax({
     url: "./ActionServlet",
     method: "GET",

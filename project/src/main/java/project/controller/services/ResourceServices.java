@@ -244,7 +244,7 @@ public class ResourceServices {
       
       int numberOfResults = 0;
       for (Map.Entry<String, Integer> match : sortedMatches) {
-        if(numberOfResults > MAX_RESULTS) break;
+        if(numberOfResults >= MAX_RESULTS) break;
         relevantResults.put(match.getKey(), res.get(match.getKey()));
         numberOfResults++;
       }

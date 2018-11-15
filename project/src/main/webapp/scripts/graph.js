@@ -1,7 +1,7 @@
 var sys;
 
 function initGraph(viewport) {
-  sys = arbor.ParticleSystem(5000, 400, 0.5);
+  sys = arbor.ParticleSystem(800, 400, 0.5);
   sys.parameters({gravity:true});
   sys.renderer = renderer(viewport);
 }
@@ -13,7 +13,7 @@ function updateGraph(graph) {
 function clearGraph() {
   sys.merge({
     nodes: {},
-    edged: {}
+    edges: {}
   });
 }
 
@@ -76,7 +76,7 @@ function renderer(viewport) {
         context.textAlign = 'center';
         
         // drawing
-        context.strokeStyle = '#888888';
+        context.strokeStyle = '#000000';
         context.lineWidth = 2;
         context.beginPath();
         context.moveTo(pt1.x, pt1.y);
@@ -132,7 +132,7 @@ function renderer(viewport) {
         context.lineWidth = 4;
         context.strokeStyle = "#000000";
         context.stroke();
-        context.fillStyle = "#000000";
+        context.fillStyle = "#ffffff";
         for (var i = 0; i < lines.length; i++) {
           context.fillText(lines[i], pt.x, pt.y + 16 * (i - lines.length / 2) + 8);
         }
