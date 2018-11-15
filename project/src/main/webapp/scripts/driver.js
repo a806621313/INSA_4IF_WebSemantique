@@ -13,7 +13,7 @@ $(document).ready(function() {
     if (e.keyCode === 13) {
       queryByName($("#search-bar").val());
     }
-  })
+  });
 });
 
 function loadSuggestions() {
@@ -23,18 +23,16 @@ function loadSuggestions() {
     data: {
       action: "loadSuggestions"
     },
-    dataType: "json",
-    success: function(data) {
-      if (data.responseType === "suggestions") {
-        // Todo: display results in the side panel
-        $("#query-result").html("");
-        for (var i=0; i<data.responseContent.length; i++) {
-          $("#query-result").append("<li>" + data.responseContent[i].resourceName + " " + data.responseContent[i].resourceType + "</li>");
-        }
+    dataType: "json"
+  }).done(function(data) {
+    $("#query-results").html("");
+    if (data.responseType === "suggestions") {
+      appendTitle($("#query-results"), "Search suggestions");
+      for (var i=0; i<data.responseContent.length; i++) {
+        appendQuerySuggestion($("#query-results"), data.responseContent[i]);
       }
-    },
-    error: function() {
-      $("#query-result").html("");
+    } else {
+      appendErrorMessage($("#query-results"), "Service unavailable");
     }
   });
 }
@@ -49,15 +47,36 @@ function queryByName(name) {
     },
     dataType: "json"
   }).done(function (data) {
+    $("#query-results").html("");
     if (data.responseType === "queryResults") {
-      $("#query-result").html("");
       for (var i=0; i<data.responseContent.length; i++) {
-        $("#query-result").append("<li>" + data.responseContent[i].resourceName + " " + data.responseContent[i].resourceType + "</li>");
+        appendQuerySuggestion($("#query-results"), data.responseContent[i]);
       }
+    } else if (data.responseType === "noResult") {
+      appendErrorMessage($("#query-results"), "No result");
+    } else {
+      appendErrorMessage($("#query-results"), "Service unavailable");
     }
   });
 }
 
 function queryByUri(uri) {
-
+  $.ajax({
+    url: "./ActionServlet",
+    method: "GET",
+    data: {
+      action: "queryByUri",
+      query: uri
+    },
+    dataType: "json"
+  }).done(function (data) {
+    $("#query-results").html("");
+    clearGraph();
+    if (data.responseType === "resourceInfoGraph") {
+      updateGraph(data.responseContent.resourceGraph);
+      appendResourceInformation($("#query-results"), data.responseContent.resourceInfo);
+    } else {
+      appendErrorMessage($("#query-results"), "Service unavailable");
+    }
+  });
 }

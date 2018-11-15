@@ -10,6 +10,10 @@ function updateGraph(graph) {
   sys.merge(graph);
 }
 
+function clearGraph() {
+  
+}
+
 function renderer(viewport) {
   var canvas = $(viewport).get(0);
   var context = canvas.getContext("2d");
@@ -32,7 +36,7 @@ function renderer(viewport) {
     },
     
     redraw:function() {
-      context.fillStyle = 'white';
+      context.fillStyle = '#eee';
       context.fillRect(0, 0, canvas.width, canvas.height);
       
       // edge: {source:Node, target:Node, length:#, data:{type:""}}
@@ -52,7 +56,7 @@ function renderer(viewport) {
         context.moveTo(pt1.x, pt1.y);
         context.lineTo(pt2.x, pt2.y);
         context.stroke();
-        context.fillStyle = 'black';
+        context.fillStyle = '#000';
         context.fillText(text, (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2 + 6);
       });
 

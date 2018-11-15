@@ -12,12 +12,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="libs/arbor-0.91/arbor.js"></script>
     <script src="scripts/graph.js"></script>
+    <script src="scripts/htmlfactory.js"></script>
     <script src="scripts/driver.js"></script>
   </head>
   
   <body>
     <header>
-      <div class="row search-bar-row">
+      <div class="row search-area">
         <div class="col-md-4">
           <div class="card card-sm">
             <div class="card-body row no-gutters align-items-center">
@@ -34,19 +35,16 @@
           </div>
         </div>
         <div class="col"></div>
-        <div class="col-md-3 h4 title-col">
+        <div class="col-md-3 h4 title">
           IF-4 Semantic Web Project
         </div>
       </div>
     </header>
     
-    <div class="row page-content-layout">
-      <div class="col-md-4 side-panel-col">
-        
-        
-        <ul id="query-result"></ul>
-        
-        
+    <div class="row">
+      <div class="col-md-4 side-panel">
+        <div id="query-results"></div>
+        <!--
         <div class="movie-name" style="margin-bottom: 7px;">
           <p style="font-size: xx-large; margin-bottom: 0;">Eragon</p>
           <em class="node-type" style="color: red; font-size: large">Film</em>
@@ -74,8 +72,7 @@
             <li>Resident Evil</li>
           </ul>
         </div>
-        
-        
+        -->
       </div>
       <div class="col-md-8 graph-col">
         <canvas id="viewport"></canvas>
