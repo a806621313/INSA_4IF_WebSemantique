@@ -1,4 +1,9 @@
-.search-bar-layout {
+body {
+    background-color: #000;
+    color: #ced4da;
+}
+
+.search-bar-row {
     padding-top: 8px;
     padding-bottom: 8px;
     padding-left: 8px;
@@ -6,9 +11,8 @@
     border-bottom: solid #ced4da 2px;
 }
 
-.project-title {
+.title-col {
     align-self: center;
-    color: #ced4da;
 }
 
 .card-body {
@@ -23,4 +27,12 @@
     border: none;
     outline: none;
     box-shadow: none;
+}
+
+#viewport {
+    min-width: 300px;
+    min-height: 500px;
+    width: 100%;
+    height: 100%;
+    margin: 2px;
 }
