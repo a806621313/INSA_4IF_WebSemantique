@@ -1,5 +1,17 @@
-function renderer(canvasId) {
-  var canvas = $(canvasId).get(0);
+var sys;
+
+function initGraph(viewport) {
+  sys = arbor.ParticleSystem(200, 800, 0.5);
+  sys.parameters({gravity:true});
+  sys.renderer = renderer(viewport);
+}
+
+function updateGraph(graph) {
+  sys.merge(graph);
+}
+
+function renderer(viewport) {
+  var canvas = $(viewport).get(0);
   var context = canvas.getContext("2d");
   var particleSystem;
   

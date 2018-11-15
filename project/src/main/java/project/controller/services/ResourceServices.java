@@ -39,7 +39,7 @@ public class ResourceServices {
   private final static int NUMBER_OF_SUGGESTIONS = 3;
   
   /** Cache path */
-  private final static String CACHE_PATH = "path-to-your-caches"; // Machine-specific path
+  private final static String CACHE_PATH = "C:/Users/alexi/Desktop"; // Machine-specific path
   /** Companies cache filenames */
   private final static String COMPANIES_CACHE_FILENAME = "companies-cache";
   /** Films cache filenames */
@@ -274,7 +274,7 @@ public class ResourceServices {
       int numberOfLevenshteinResults = 0;
       for (Map.Entry<String, Integer> match : sortedMatches) {
         if (match.getValue() > MAX_LEVENSHTEIN_DISTANCE) break;
-        if (numberOfLevenshteinResults > MAX_LEVENSHTEIN_RESULTS) break;
+        if (numberOfLevenshteinResults >= MAX_LEVENSHTEIN_RESULTS) break;
         relevantResults.put(match.getKey(), res.get(match.getKey()));
         numberOfLevenshteinResults++;
       }
