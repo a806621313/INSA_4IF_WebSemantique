@@ -21,30 +21,30 @@ import java.util.logging.Logger;
 public class ResourceServices {
   
   /** A local database of company names and URIs (key = name ; value = URI) */
-  private static Map<String, String> COMPANIES;
+  private final static Map<String, String> COMPANIES = new LinkedHashMap<>();
   /** A local database of film names and URIs (key = name ; value = URI) */
-  private static Map<String, String> FILMS;
+  private final static Map<String, String> FILMS = new LinkedHashMap<>();
   /** A local database of person names and URIs (key = name ; value = URI) */
-  private static Map<String, String> PERSONS;
+  private final static Map<String, String> PERSONS = new LinkedHashMap<>();
   /** A local database of all the resource names and URIs (key = name ; value = URI) */
-  private static Map<String, String> ALL_RESOURCES;
+  private final static Map<String, String> ALL_RESOURCES = new LinkedHashMap<>();
   
   /** Maximum distance allowed between query words and resource names */
   private final static int MAX_LEVENSHTEIN_DISTANCE = 3;
   /** Maximum number of results when using the Levenshtein distance matching algorithm */
   private final static int MAX_LEVENSHTEIN_RESULTS = 10;
   /** Maximum number of results when using the standard matching algorithm */
-  private final static int MAX_RESULTS = 50;
+  private final static int MAX_RESULTS = 200;
   /** Number of search suggestions per resource category sent to the user */
   private final static int NUMBER_OF_SUGGESTIONS = 3;
   
   /** Cache path */
   private final static String CACHE_PATH = "C:/Users/alexi/Desktop"; // Machine-specific path
-  /** Companies cache filenames */
+  /** Companies cache filename */
   private final static String COMPANIES_CACHE_FILENAME = "companies-cache";
-  /** Films cache filenames */
+  /** Films cache filename */
   private final static String FILMS_CACHE_FILENAME = "films-cache";
-  /** Persons cache filenames */
+  /** Persons cache filename */
   private final static String PERSONS_CACHE_FILENAME = "persons-cache";
   
   /**
@@ -54,10 +54,6 @@ public class ResourceServices {
     try {
       // Load the resources from the cache
       Logger.getLogger(ResourceServices.class.getName()).log(Level.SEVERE, "Loading resources from the cache...");
-      COMPANIES = new LinkedHashMap<>();
-      FILMS = new LinkedHashMap<>();
-      PERSONS = new LinkedHashMap<>();
-      ALL_RESOURCES = new LinkedHashMap<>();
       COMPANIES.putAll(loadResourceDataFromCache(COMPANIES_CACHE_FILENAME));
       FILMS.putAll(loadResourceDataFromCache(FILMS_CACHE_FILENAME));
       PERSONS.putAll(loadResourceDataFromCache(PERSONS_CACHE_FILENAME));
@@ -245,6 +241,7 @@ public class ResourceServices {
       int numberOfResults = 0;
       for (Map.Entry<String, Integer> match : sortedMatches) {
         if(numberOfResults >= MAX_RESULTS) break;
+        if(match.getValue() < 0) break;
         relevantResults.put(match.getKey(), res.get(match.getKey()));
         numberOfResults++;
       }
