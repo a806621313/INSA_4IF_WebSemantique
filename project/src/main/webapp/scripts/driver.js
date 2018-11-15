@@ -49,11 +49,12 @@ function queryByName(name) {
   }).done(function (data) {
     $("#query-results").html("");
     if (data.responseType === "queryResults") {
+      appendTitle($("#query-results"), "Search results");
       for (var i=0; i<data.responseContent.length; i++) {
         appendQuerySuggestion($("#query-results"), data.responseContent[i]);
       }
     } else if (data.responseType === "noResult") {
-      appendErrorMessage($("#query-results"), "No result");
+      appendErrorMessage($("#query-results"), "Sorry, no results found :(");
     } else {
       appendErrorMessage($("#query-results"), "Service unavailable");
     }
@@ -76,7 +77,7 @@ function queryByUri(uri) {
       updateGraph(data.responseContent.resourceGraph);
       appendResourceInformation($("#query-results"), data.responseContent.resourceInfo);
     } else {
-      appendErrorMessage($("#query-results"), "Service unavailable");
+      appendErrorMessage($("#query-results"), "Service unavailable :(");
     }
   });
 }
