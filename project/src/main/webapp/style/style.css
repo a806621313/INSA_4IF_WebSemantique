@@ -87,9 +87,7 @@ body {
 }
 
 #viewport {
-    min-width: 300px;
-    min-height: 500px;
-    width: 100%;
-    height: 100%;
-    margin: 0;
+    margin-left: 100px;
+    width: 800px;
+    height: 800px;
 }

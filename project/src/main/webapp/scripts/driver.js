@@ -17,6 +17,7 @@ $(document).ready(function() {
 });
 
 function loadSuggestions() {
+  clearGraph();
   $.ajax({
     url: "./ActionServlet",
     method: "GET",
@@ -48,6 +49,7 @@ function queryByName(name) {
     dataType: "json"
   }).done(function (data) {
     $("#query-results").html("");
+    clearGraph();
     if (data.responseType === "queryResults") {
       appendTitle($("#query-results"), "Search results");
       for (var i=0; i<data.responseContent.length; i++) {

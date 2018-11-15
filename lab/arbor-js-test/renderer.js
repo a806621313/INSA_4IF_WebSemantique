@@ -1,3 +1,20 @@
+function wrap(context, text, lineMaxLength) {
+  var words = text.split(" ");
+  var lines = [];
+  var line = "";
+  words.forEach(word => {
+    var lineLength = context.measureText(line + " " + word).width;
+    if (lineLength > lineMaxLength) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = line + " " + word;
+    }
+  });
+  lines.push(line);
+  return lines;
+}
+
 function renderer(canvasId) {
   var canvas = $(canvasId).get(0)
   var context = canvas.getContext("2d");
@@ -13,18 +30,8 @@ function renderer(canvasId) {
         var pos = $(canvas).offset();
         mousePoint = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
         nearest = particleSystem.nearest(mousePoint);
-        if(nearest.distance < nearest.node.data.radius){
-          if(nearest.node.data.uri) {
-            queryResourceByUri(nearest.node.data.uri)
-          }
-          else if (nearest.node.data.deploy)
-          {
-            queryDeployNode(nearest.node)
-          }
-          else if (nearest.node.data.focus)
-          {
-            queryFocusNode(nearest.node)
-          }
+        if(nearest.node.data.uri && nearest.distance < nearest.node.data.radius) {
+          queryResourceByUri(nearest.node.data.uri);
         }
       })
     },
@@ -37,11 +44,9 @@ function renderer(canvasId) {
       // pt1:  {x:#, y:#}  source position in screen coords
       // pt2:  {x:#, y:#}  target position in screen coords
       particleSystem.eachEdge(function(edge, pt1, pt2) {
-        // metrics
         var text = edge.data.type
         context.font = 'bold 14pt Calibri';
         context.textAlign = 'center';
-        var textMetrics = context.measureText(text);
         
         // drawing
         context.strokeStyle = '#888888'
@@ -50,20 +55,20 @@ function renderer(canvasId) {
         context.moveTo(pt1.x, pt1.y)
         context.lineTo(pt2.x, pt2.y)
         context.stroke()
-        context.fillStyle = 'black';
+        context.fillStyle = '#000000';
         var rotation = Math.acos((Math.abs(pt1.y-pt2.y))/(Math.sqrt(Math.pow((pt1.y-pt2.y),2)+Math.pow((pt1.x-pt2.x),2))))
         context.save();
         context.translate((pt1.x + pt2.x) / 2,(pt1.y + pt2.y) / 2);
-        if(pt2.x>=pt1.x && pt2.y>=pt1.y){          //en bas à droite
+        if(pt2.x>=pt1.x && pt2.y>=pt1.y){          // Bottom-right
           context.rotate(-rotation+Math.PI*0.5);
         }
-        else if(pt2.x<=pt1.x && pt2.y>=pt1.y){     //en bas à gauche
+        else if(pt2.x<=pt1.x && pt2.y>=pt1.y){     // Bottom-left
           context.rotate(rotation-Math.PI*0.5);
         }
-        else if(pt2.x<=pt1.x && pt2.y<=pt1.y){     //en haut à gauche
+        else if(pt2.x<=pt1.x && pt2.y<=pt1.y){     // Top-left
           context.rotate(-rotation+Math.PI*0.5);
         }
-        else if(pt2.x>=pt1.x && pt2.y<=pt1.y){     //en haut à droite
+        else if(pt2.x>=pt1.x && pt2.y<=pt1.y){     // Top-right
           context.rotate(rotation-Math.PI*0.5);
         }
         
@@ -74,41 +79,37 @@ function renderer(canvasId) {
       // node: {mass:#, p:{x,y}, name:"", data:{name:"", uri:"", radius:#, color:#}}
       // pt:   {x:#, y:#}  node position in screen coords
       particleSystem.eachNode(function(node, pt) {
-        // metrics
-        var text = node.data.name;
-        var words = text.split(" ");
+        // text wrapping
         context.font = '14pt Calibri';
         context.textAlign = 'center';
-        var textMetrics = node.data.radius;
-        words.forEach(word => {
-          var measure = context.measureText(word);
-          if(textMetrics<measure.width)
-          {
-            textMetrics = measure.width;
+        var lines = wrap(context, node.data.name, 100);
+        var radius = 0;
+        lines.forEach(line => {
+          if (context.measureText(line).width >= radius) {
+            radius = context.measureText(line).width;
           }
         });
-        node.data.radius = (textMetrics) / 2 + 8;
+        radius = (3 * radius) / 4;
+        if (radius > 100) {
+          radius = 100;
+        }
+        
+        // set node radius
+        node.data.radius = radius;
         
         // drawing
         context.beginPath();
-        context.arc(pt.x, pt.y, node.data.radius, 0, 2 * Math.PI, false);
+        context.arc(pt.x, pt.y, radius, 0, 2 * Math.PI, false);
         context.fillStyle = node.data.color;
         context.fill();
         context.lineWidth = 4;
-        context.strokeStyle = 'black';
+        context.strokeStyle = "#000000";
         context.stroke();
-        context.fillStyle = 'black';
-        var i = 0
-        words.forEach(word => {
-          if (words.length%2==0){
-            context.fillText(word, pt.x, pt.y + 12*i)
-          }
-          else{
-            context.fillText(word, pt.x, pt.y + 12*i + 6)
-          }
-          i++;
-        });
-      })    			
+        context.fillStyle = "#000000";
+        for (var i = 0; i < lines.length; i++) {
+          context.fillText(lines[i], pt.x, pt.y + 16 * (i - lines.length / 2) + 8)
+        }
+      })		
     },
   }
   return renderer
