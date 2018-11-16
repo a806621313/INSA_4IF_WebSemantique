@@ -43,7 +43,7 @@ public class SparqlServices {
       QueryExecution queryFilms = createPrefixedQuery(
           "SELECT DISTINCT ?f ?name WHERE {\n"
         + "  ?f rdf:type dbo:Film ;\n"
-        + "     dbo:runtime ?r ;\n"
+        + "     dbo:director ?d ;\n"
         + "     rdfs:label ?name .\n"
         + "     FILTER (lang(?name) = 'en').\n"
         + "     FILTER (" + condition + "). \n"
@@ -68,7 +68,7 @@ public class SparqlServices {
   public static Map<String, String> getAllCompanyNamesAndUris() {
     Map<String, String> companies = new HashMap<String, String>();
     
-    QueryExecution queryFilms = createPrefixedQuery("SELECT ?uri ?name WHERE {\n"
+    QueryExecution queryCompanies = createPrefixedQuery("SELECT ?uri ?name WHERE {\n"
             + "  ?uri rdf:type dbo:Company ;\n"
             + "     rdf:type ?o ;\n"
             + "     rdfs:label ?name .\n"
@@ -76,7 +76,7 @@ public class SparqlServices {
             + "  FILTER (lang(?name)='en')\n"
             + "}");
     try {
-      ResultSet results = queryFilms.execSelect();
+      ResultSet results = queryCompanies.execSelect();
       while (results.hasNext()) {
         QuerySolution elem = results.nextSolution();
         companies.put(elem.getLiteral("name").getString(), elem.getResource("uri").getURI().toString());
@@ -84,7 +84,7 @@ public class SparqlServices {
     } catch (Exception e) {
       System.out.println(e);
     } finally {
-      queryFilms.close();
+      queryCompanies.close();
     }
     return companies;
   }
@@ -100,7 +100,8 @@ public class SparqlServices {
         + "  ?f rdf:type dbo:Film ;\n"
         + "     dbo:runtime ?r ;\n"
         + "     dbo:starring ?a .\n"
-        + "  ?a foaf:name ?name .\n"
+        + "  ?a foaf:name ?name ;\n"
+        + "     rdf:type dbo:Person .\n"
         + "  FILTER(lang(?name)='en') .\n"
         + "  FILTER(" + condition + "). \n"
         + "}"
@@ -112,7 +113,8 @@ public class SparqlServices {
         + "  ?f rdf:type dbo:Film ;\n"
         + "     dbo:runtime ?r ;\n"
         + "     dbo:director ?a .\n"
-        + "  ?a foaf:name ?name .\n"
+        + "  ?a foaf:name ?name ;\n"
+        + "     rdf:type dbo:Person .\n"
         + "  FILTER(lang(?name)='en') .\n"
         + "  FILTER(" + condition + "). \n"
         + "}"
@@ -124,7 +126,8 @@ public class SparqlServices {
         + "  ?f rdf:type dbo:Film ;\n"
         + "     dbo:runtime ?r ;\n"
         + "     dbo:musicComposer ?a .\n"
-        + "  ?a foaf:name ?name .\n"
+        + "  ?a foaf:name ?name ;\n"
+        + "     rdf:type dbo:Person .\n"
         + "  FILTER(lang(?name)='en') .\n"
         + "  FILTER(" + condition + "). \n"
         + "}"

@@ -72,7 +72,7 @@ function renderer(viewport) {
       // pt2:  {x:#, y:#}  target position in screen coords
       particleSystem.eachEdge(function(edge, pt1, pt2) {
         var text = edge.data.type;
-        context.font = 'bold 14pt Calibri';;
+        context.font = 'bold 12pt Calibri';;
         context.textAlign = 'center';
         
         // drawing
@@ -107,9 +107,9 @@ function renderer(viewport) {
       // pt:   {x:#, y:#}  node position in screen coords
       particleSystem.eachNode(function(node, pt) {
         // text wrapping
-        context.font = '14pt Calibri';
+        context.font = '12pt Calibri';
         context.textAlign = 'center';
-        var lines = wrap(context, node.data.name, 100);
+        var lines = wrap(context, node.data.name, 80);
         var radius = 0;
         lines.forEach(line => {
           if (context.measureText(line).width >= radius) {

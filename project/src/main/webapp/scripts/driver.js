@@ -5,13 +5,23 @@ $(document).ready(function() {
   
   // Bind events to actions
   $("#search-button").on("click", function() {
-    queryByName($("#search-bar").val());
+    var query = $("#search-bar").val();
+      if (query) {
+        queryByName(query);
+      } else {
+        loadSuggestions();
+      }
   });
   
   $("#search-bar").on("keyup", function(e) {
     e.preventDefault();
     if (e.keyCode === 13) {
-      queryByName($("#search-bar").val());
+      var query = $("#search-bar").val();
+      if (query) {
+        queryByName(query);
+      } else {
+        loadSuggestions();
+      }
     }
   });
 });

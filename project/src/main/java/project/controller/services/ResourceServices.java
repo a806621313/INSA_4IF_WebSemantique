@@ -196,7 +196,12 @@ public class ResourceServices {
 
   private static Map<String, String> matchResourcesByName(String name, Map<String, String> res) {
     Map<String, String> relevantResults = new LinkedHashMap<>();
-    String[] queryWords = name.trim().split("\\P{L}+");
+    String[] queryWords = name.trim().split("\\W+");
+    
+    // Edge case
+    if (queryWords.length == 0) {
+      return relevantResults;
+    }
     
     // Temporary structure to save the distance between the query and the resources
     Map<String, Integer> resourceMatches = new LinkedHashMap<>();
@@ -204,7 +209,7 @@ public class ResourceServices {
       resourceMatches.put(entry.getKey(), 0);
     }
       
-     // Match resource names with query words
+    // Match resource names with query words
     boolean queryWordsMatchResources = false;
     for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
       for (String word : queryWords) {
@@ -253,7 +258,7 @@ public class ResourceServices {
         int cumulatedMinimumLevenshteinDistance = 0;
         for (String queryWord : queryWords) {
           int minDistance = MAX_LEVENSHTEIN_DISTANCE + 1;
-          for (String resourceWord : match.getKey().split("\\P{L}+")) {
+          for (String resourceWord : match.getKey().split("\\W+")) {
             int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
             minDistance = Math.min(minDistance, distance);
           }
