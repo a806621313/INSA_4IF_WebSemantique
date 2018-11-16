@@ -219,6 +219,7 @@ public class ResourceServices {
     // Match resource names with query words
     for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
       for (String queryWord : queryWords) {
+        if (queryWord.isEmpty()) continue;
         int queryWordScore = 0;
         int minDistance = MAX_LEVENSHTEIN_DISTANCE + queryWord.length();
         boolean useLevenshtein = true;
