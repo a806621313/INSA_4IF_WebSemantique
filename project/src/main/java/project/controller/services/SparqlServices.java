@@ -21,7 +21,8 @@ public class SparqlServices {
     + "PREFIX dbo: <http://dbpedia.org/ontology/>\n"
     + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     + "PREFIX dbc: <http://dbpedia.org/resource/Category:>\n"
-    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n";
+    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+    + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n";
 
   private static QueryExecution createPrefixedQuery (String queryString){
     Query query = QueryFactory.create(QNAMES + queryString);
@@ -39,62 +40,123 @@ public class SparqlServices {
         condition = "strlen(str(?name)) >= 30";
       }
       
-      QueryExecution qexec = createPrefixedQuery(
-          "SELECT distinct ?f ?name WHERE {\n"
+      QueryExecution queryFilms = createPrefixedQuery(
+          "SELECT DISTINCT ?f ?name WHERE {\n"
         + "  ?f rdf:type dbo:Film ;\n"
         + "     dbo:runtime ?r ;\n"
         + "     rdfs:label ?name .\n"
         + "     FILTER (lang(?name) = 'en').\n"
-        + "     Filter ("+condition+"). \n"
+        + "     FILTER (" + condition + "). \n"
         + "}"
       );
         
       try {
-        ResultSet result = qexec.execSelect();
-
-        while (result.hasNext() ){
+        ResultSet result = queryFilms.execSelect();
+        while (result.hasNext()) {
           QuerySolution elem = result.next();
-          // System.out.print(elem.getResource("f").getURI().toString()+ " // ");
-          // System.out.println(elem.getLiteral("name").getString());
-          films.put(elem.getLiteral("name").getString(),elem.getResource("f").getURI().toString()) ;
+          films.put(elem.getLiteral("?name").getString(), elem.getResource("?f").getURI().toString()) ;
         }
-      } catch(Exception e) {
+      } catch (Exception e) {
         System.out.println(e);
       } finally {
-        qexec.close();
+        queryFilms.close();
       }
     }
-    //System.out.println(FilmsNamesUris.size());
     return films;
   }
 
   public static Map<String, String> getAllCompanyNamesAndUris() {
-    QueryExecution qexec = createPrefixedQuery("SELECT ?uri ?name WHERE {\n"
+    Map<String, String> companies = new HashMap<String, String>();
+    
+    QueryExecution queryFilms = createPrefixedQuery("SELECT ?uri ?name WHERE {\n"
             + "  ?uri rdf:type dbo:Company ;\n"
             + "     rdf:type ?o ;\n"
             + "     rdfs:label ?name .\n"
             + "  FILTER regex(str(?o), \"WikicatFilmProductionCompaniesOf\").\n"
             + "  FILTER (lang(?name)='en')\n"
             + "}");
-
-    ResultSet results = qexec.execSelect();
-
-    Map<String, String> films = new HashMap<String, String>();
-
-    String uri = "";
-    String name = "";
-
-    for (; results.hasNext();) {
-      QuerySolution elem = results.nextSolution();
-      uri = elem.getResource("uri").getURI().toString();
-      name = elem.getLiteral("name").getString();
-      films.put(name, uri);
+    try {
+      ResultSet results = queryFilms.execSelect();
+      while (results.hasNext()) {
+        QuerySolution elem = results.nextSolution();
+        companies.put(elem.getLiteral("name").getString(), elem.getResource("uri").getURI().toString());
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    } finally {
+      queryFilms.close();
     }
-    return films;
+    return companies;
   }
 
   public static Map<String, String> getAllPersonNamesAndUris() {
-      return getAllCompanyNamesAndUris(); // ! for test purposes
+    Map<String, String> persons = new HashMap<String, String>();
+    for (int i = 0; i < 26; i++) {
+      String condition = "strstarts(str(?name), '" + (char)('A' + i) + "')";
+      
+      // actors
+      QueryExecution queryActors = createPrefixedQuery(
+          "SELECT DISTINCT ?a ?name WHERE {\n"
+        + "  ?f rdf:type dbo:Film ;\n"
+        + "     dbo:runtime ?r ;\n"
+        + "     dbo:starring ?a .\n"
+        + "  ?a foaf:name ?name .\n"
+        + "  FILTER(lang(?name)='en') .\n"
+        + "  FILTER(" + condition + "). \n"
+        + "}"
+      );
+      
+      // directors
+      QueryExecution queryDirectors = createPrefixedQuery(
+          "SELECT DISTINCT ?a ?name WHERE {\n"
+        + "  ?f rdf:type dbo:Film ;\n"
+        + "     dbo:runtime ?r ;\n"
+        + "     dbo:director ?a .\n"
+        + "  ?a foaf:name ?name .\n"
+        + "  FILTER(lang(?name)='en') .\n"
+        + "  FILTER(" + condition + "). \n"
+        + "}"
+      );
+      
+      // music composers
+      QueryExecution queryMusicComposers = createPrefixedQuery(
+          "SELECT DISTINCT ?a ?name WHERE {\n"
+        + "  ?f rdf:type dbo:Film ;\n"
+        + "     dbo:runtime ?r ;\n"
+        + "     dbo:musicComposer ?a .\n"
+        + "  ?a foaf:name ?name .\n"
+        + "  FILTER(lang(?name)='en') .\n"
+        + "  FILTER(" + condition + "). \n"
+        + "}"
+      );
+      
+      try {
+        ResultSet actors = queryActors.execSelect();
+        while (actors.hasNext()) {
+          QuerySolution elem = actors.next();
+          persons.put(elem.getLiteral("?name").getString(), elem.getResource("?a").getURI().toString()) ;
+        }
+        
+        ResultSet directors = queryDirectors.execSelect();
+        while (directors.hasNext()) {
+          QuerySolution elem = directors.next();
+          persons.put(elem.getLiteral("?name").getString(), elem.getResource("?a").getURI().toString()) ;
+        }
+        
+        ResultSet musicComposers = queryMusicComposers.execSelect();
+        while (musicComposers.hasNext()) {
+          QuerySolution elem = musicComposers.next();
+          persons.put(elem.getLiteral("?name").getString(), elem.getResource("?a").getURI().toString()) ;
+        }
+      } catch (Exception e) {
+        System.out.println(e);
+      } finally {
+        queryActors.close();
+        queryDirectors.close();
+        queryMusicComposers.close();
+      }
+    }
+    return persons;
   }
 
   // ---------------------------------------------------------- Services to get Resource Information
