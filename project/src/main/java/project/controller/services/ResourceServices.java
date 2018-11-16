@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import project.utils.StringUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,11 +31,9 @@ public class ResourceServices {
   private final static Map<String, String> ALL_RESOURCES = new LinkedHashMap<>();
   
   /** Maximum distance allowed between query words and resource names */
-  private final static int MAX_LEVENSHTEIN_DISTANCE = 4;
-  /** Maximum number of results when using the Levenshtein distance matching algorithm */
-  private final static int MAX_LEVENSHTEIN_RESULTS = 40;
+  private final static int MAX_LEVENSHTEIN_DISTANCE = 3;
   /** Maximum number of results when using the standard matching algorithm */
-  private final static int MAX_RESULTS = 200;
+  private final static int MAX_RESULTS = 100;
   /** Number of search suggestions per resource category sent to the user */
   private final static int NUMBER_OF_SUGGESTIONS = 3;
   
@@ -193,15 +192,23 @@ public class ResourceServices {
     }
     return results;
   }
-
+  
   private static Map<String, String> matchResourcesByName(String name, Map<String, String> res) {
     Map<String, String> relevantResults = new LinkedHashMap<>();
-    String[] queryWords = name.trim().split("\\W+");
+    String[] queryWords = name.toUpperCase().trim().split("\\W+");
     
     // Edge case
     if (queryWords.length == 0) {
       return relevantResults;
     }
+    
+    // Optimization: sort query words by length
+    Arrays.sort(queryWords, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        return s1.length() - s2.length();
+      }
+    });
     
     // Temporary structure to save the distance between the query and the resources
     Map<String, Integer> resourceMatches = new LinkedHashMap<>();
@@ -210,79 +217,56 @@ public class ResourceServices {
     }
       
     // Match resource names with query words
-    boolean queryWordsMatchResources = false;
     for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
-      for (String word : queryWords) {
-        // Total length of the query contained by the resource name
-        if (match.getKey().toUpperCase().contains(word.toUpperCase())) {
-          queryWordsMatchResources = true;
-          match.setValue(match.getValue() + word.length());
+      for (String queryWord : queryWords) {
+        int queryWordScore = 0;
+        int minDistance = MAX_LEVENSHTEIN_DISTANCE + queryWord.length();
+        boolean useLevenshtein = true;
+        for (String resourceWord : match.getKey().split("\\W+")) {
+          resourceWord = resourceWord.toUpperCase();
+          if (resourceWord.equals(queryWord)) {
+            queryWordScore += (queryWord.length() * queryWord.length() * queryWord.length());
+            useLevenshtein = false; // Perfect match, no need to compute the Levenshtein distance
+          } else if (resourceWord.contains(queryWord)) {
+            queryWordScore += (queryWord.length() * queryWord.length());
+            minDistance = resourceWord.length() - queryWord.length();
+          } else if (useLevenshtein) {
+            minDistance = Math.min(minDistance, StringUtils.getLevenshteinDistance(queryWord, resourceWord));
+          }
         }
+        if (useLevenshtein && minDistance <= MAX_LEVENSHTEIN_DISTANCE && queryWord.length() >= 3*minDistance) {
+          queryWordScore += ((queryWord.length() - minDistance) * (queryWord.length() - minDistance));
+        } else if (useLevenshtein) {
+          match.setValue(0);
+          break;
+        }
+        match.setValue(match.getValue() + queryWordScore);
       }
+      // Tie-breaking: shortest results first
+      match.setValue(match.getValue() - match.getKey().split("\\W+").length);
     }
     
-    if (queryWordsMatchResources) {
-      // Keep only resources that matched with the name query
-      List<Map.Entry<String, Integer>> sortedMatches = new ArrayList<>();
-      for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
-        if (match.getValue() > 0) {
-          sortedMatches.add(match);
-        }
-      }
-      
-      // Refine resources relevance: relevance is (Match Length)^2 - Levenshtein Distance
-      for (Map.Entry<String, Integer> match : sortedMatches) {
-        int relevance = match.getValue() * match.getValue() * match.getValue() - StringUtils.getLevenshteinDistance(match.getKey(), name) - match.getKey().length();
-        match.setValue(relevance);
-      }
-      
-      // Sort the resources by relevance
-      Collections.sort(sortedMatches, new Comparator<Map.Entry<String, Integer>>() {
-        @Override
-        public int compare(Map.Entry<String, Integer> r1, Map.Entry<String, Integer> r2) {
-          return - r1.getValue().compareTo(r2.getValue());
-        }
-      });
-      
-      int numberOfResults = 0;
-      for (Map.Entry<String, Integer> match : sortedMatches) {
-        if(numberOfResults >= MAX_RESULTS) break;
-        if(match.getValue() < 0) break;
-        relevantResults.put(match.getKey(), res.get(match.getKey()));
-        numberOfResults++;
+    // Keep only resources that matched something
+    List<Map.Entry<String, Integer>> sortedMatches = new ArrayList<>();
+    for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
+      if (match.getValue() > 0) {
+        sortedMatches.add(match);
       }
     }
-    // If no resource name matches the query, compute Levenshtein distances
-    else {
-      for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
-        int cumulatedMinimumLevenshteinDistance = 0;
-        for (String queryWord : queryWords) {
-          int minDistance = MAX_LEVENSHTEIN_DISTANCE + 1;
-          for (String resourceWord : match.getKey().split("\\W+")) {
-            int distance = StringUtils.getLevenshteinDistance(queryWord.toUpperCase(), resourceWord.toUpperCase());
-            minDistance = Math.min(minDistance, distance);
-          }
-          cumulatedMinimumLevenshteinDistance += minDistance;
-        }
-        match.setValue(cumulatedMinimumLevenshteinDistance / queryWords.length);
-      }
-
-      // Sort the resources by relevance (lowest Levenshtein distance)
-      List<Map.Entry<String, Integer>> sortedMatches = new ArrayList<>(resourceMatches.entrySet());
-      Collections.sort(sortedMatches, new Comparator<Map.Entry<String, Integer>>() {
-        @Override
-        public int compare(Map.Entry<String, Integer> r1, Map.Entry<String, Integer> r2) {
-          return r1.getValue().compareTo(r2.getValue());
-        }
-      });
       
-      int numberOfLevenshteinResults = 0;
-      for (Map.Entry<String, Integer> match : sortedMatches) {
-        if (match.getValue() > MAX_LEVENSHTEIN_DISTANCE) break;
-        if (numberOfLevenshteinResults >= MAX_LEVENSHTEIN_RESULTS) break;
-        relevantResults.put(match.getKey(), res.get(match.getKey()));
-        numberOfLevenshteinResults++;
+    // Sort the resources by relevance
+    Collections.sort(sortedMatches, new Comparator<Map.Entry<String, Integer>>() {
+      @Override
+      public int compare(Map.Entry<String, Integer> r1, Map.Entry<String, Integer> r2) {
+        return - r1.getValue().compareTo(r2.getValue());
       }
+    });
+      
+    int numberOfResults = 0;
+    for (Map.Entry<String, Integer> match : sortedMatches) {
+      if(numberOfResults >= MAX_RESULTS) break;
+      relevantResults.put(match.getKey(), res.get(match.getKey()));
+      numberOfResults++;
     }
     
     return relevantResults;
