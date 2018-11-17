@@ -202,7 +202,7 @@ public class ResourceServices {
       return relevantResults;
     }
     
-    // Optimization: sort query words by length
+    // Optimization: sort query words by length to discard resources at the lowest cost
     Arrays.sort(queryWords, new Comparator<String>() {
       @Override
       public int compare(String s1, String s2) {
@@ -210,7 +210,7 @@ public class ResourceServices {
       }
     });
     
-    // Temporary structure to save the distance between the query and the resources
+    // Save the distance between the query and the resources
     Map<String, Integer> resourceMatches = new LinkedHashMap<>();
     for (Map.Entry<String, String> entry : res.entrySet()) {
       resourceMatches.put(entry.getKey(), 0);
@@ -221,7 +221,7 @@ public class ResourceServices {
       for (String queryWord : queryWords) {
         if (queryWord.isEmpty()) continue;
         int queryWordScore = 0;
-        int minDistance = MAX_LEVENSHTEIN_DISTANCE + queryWord.length();
+        int minDistance = MAX_LEVENSHTEIN_DISTANCE + 1;
         boolean useLevenshtein = true;
         for (String resourceWord : match.getKey().split("\\W+")) {
           resourceWord = resourceWord.toUpperCase();
@@ -231,7 +231,7 @@ public class ResourceServices {
           } else if (resourceWord.contains(queryWord)) {
             queryWordScore += (queryWord.length() * queryWord.length());
             minDistance = resourceWord.length() - queryWord.length();
-          } else if (useLevenshtein) {
+          } else if (useLevenshtein && StringUtils.getLevenshteinLowerBound(queryWord, resourceWord) <= MAX_LEVENSHTEIN_DISTANCE) {
             minDistance = Math.min(minDistance, StringUtils.getLevenshteinDistance(queryWord, resourceWord));
           }
         }
@@ -244,10 +244,10 @@ public class ResourceServices {
         match.setValue(match.getValue() + queryWordScore);
       }
       // Tie-breaking: shortest results first
-      match.setValue(match.getValue() - match.getKey().split("\\W+").length);
+      match.setValue(match.getValue() + 1 - match.getKey().split("\\W+").length);
     }
     
-    // Keep only resources that matched something
+    // Keep only resources that matched every query word
     List<Map.Entry<String, Integer>> sortedMatches = new ArrayList<>();
     for (Map.Entry<String, Integer> match : resourceMatches.entrySet()) {
       if (match.getValue() > 0) {

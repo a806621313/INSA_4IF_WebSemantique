@@ -15,6 +15,8 @@ public class StringUtils {
   /**
    * Computes the Levenshtein distance between two Strings.
    * 
+   * Running time: O(N*M) where N and M are the lengths of s1 and s2
+   * 
    * @param s1 the first String
    * @param s2 the second String
    * @return the distance between s1 and s2
@@ -45,6 +47,20 @@ public class StringUtils {
     }
     
     return table[s1.length()][s2.length()];
+  }
+  
+  /**
+   * Computes a lower bound of the Levenshtein distance between two Strings.
+   * 
+   * Running time: O(1)
+   * 
+   * @param s1 the first Strings
+   * @param s2 the second Strings
+   * @return a lower bound of the distance between s1 and s2
+   */
+  public static int getLevenshteinLowerBound(String s1, String s2) {
+    // Trivial lower bound
+    return Math.abs(s1.length() - s2.length());
   }
   
 }
