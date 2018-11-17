@@ -39,7 +39,7 @@ public class SparqlServices {
   // ----------------------------------------------------------- Services for Servlet Initialization
   public static Map<String, String> getAllFilmNamesAndUris() {
     Map<String, String> films = new HashMap<String, String>();
-    for (int i = 10; i <= 30; i++) {
+    for (int i = 10; i <= 10; i++) {
       String condition = "strlen(str(?name)) = " + i;
       if (i == 10) {
         condition = "strlen(str(?name)) <= 10";
