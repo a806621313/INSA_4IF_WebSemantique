@@ -112,7 +112,8 @@ function queryByUri(uri) {
     method: "GET",
     data: {
       action: "queryByUri",
-      query: uri
+      query: uri,
+      type:"Select"
     },
     dataType: "json"
   }).done(function (data) {
