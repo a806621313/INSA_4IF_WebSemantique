@@ -1,0 +1,97 @@
+body {
+    background-color: #eee;
+    color: #eee;
+}
+
+.search-area {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    background-color: #171a1d;
+    border-bottom: solid #ced4da 2px;
+}
+
+.title {
+    align-self: center;
+}
+
+.card-body {
+    padding: 8px;
+}
+
+.form-control-borderless {
+    border: none;
+}
+
+.form-control-borderless:hover,
+.form-control-borderless:active,
+.form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.row-unique {
+    margin-right: 0;
+}
+
+.side-panel {
+    color: #000;
+    padding: 8px;
+    padding-left: 23px;
+}
+
+.side-title {
+    padding: 8px;
+    margin-bottom: 12px;
+    margin-top: 12px;
+    font-size: 30px;
+}
+
+.search-suggestion {
+    color: #eee;
+    padding: 12px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-top: 8px;
+    margin-left: 8px;
+    border-radius: 6px;
+    font-size: large;
+}
+
+.film-suggestion {
+    background-color: #004085;
+}
+
+.film-suggestion:hover {
+    background-color: #002752;
+    cursor: pointer;
+}
+
+.company-suggestion {
+    background-color: #155724;
+}
+
+.company-suggestion:hover {
+    background-color: #0b2e13;
+    cursor: pointer;
+}
+
+.person-suggestion {
+    background-color: #822224;
+}
+
+.person-suggestion:hover {
+    background-color: #491217;
+    cursor: pointer;
+}
+
+#viewport {
+    width: 800px;
+    height: 800px;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
