@@ -1,6 +1,8 @@
 package project.controller.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -253,12 +255,11 @@ public class SparqlServices {
   public static String getFilmBudget(String uri){
       String budget ="";
       QueryExecution qexec = createPrefixedQuery("SELECT ?b WHERE {\n" +
-        "    <http://dbpedia.org/resource/Cars_(film)> dbo:budget ?b .\n" +
-        "}");
-        
+        "   <"+uri+"> dbo:budget ?b .\n" +
+        "}");  
+      
     ResultSet result = qexec.execSelect();
     if( result.hasNext() ){
-
         QuerySolution elem = result.next();
         budget += elem.getLiteral("b").getString() + " ";
         String currencyUri = elem.getLiteral("b").getDatatypeURI();
@@ -266,6 +267,91 @@ public class SparqlServices {
     }
     System.out.println(budget);
     return budget;
+  }
+  
+  public static String getFilmBoxOffice(String uri){
+      String gross ="";
+      QueryExecution qexec = createPrefixedQuery("SELECT ?b WHERE {\n" +
+        "   <"+uri+"> dbo:gross ?b .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+        QuerySolution elem = result.next();
+        gross += elem.getLiteral("b").getString() + " ";
+        String currencyUri = elem.getLiteral("b").getDatatypeURI();
+        gross += currencyUri.substring(currencyUri.lastIndexOf('/') + 1).trim();
+    }
+    System.out.println(gross);
+    return gross;
+  }
+  
+  public static int getFilmRuntime(String uri){
+      int runtime =0;
+      QueryExecution qexec = createPrefixedQuery("SELECT ?r WHERE {\n" +
+        "   <"+uri+"> dbo:runtime ?r .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+        QuerySolution elem = result.next();
+        runtime = elem.getLiteral("r").getInt();
+    }
+    System.out.println(runtime);
+    return runtime;
+  }
+  
+  public static String getFilmDirector(String uri){
+      String director ="";
+      QueryExecution qexec = createPrefixedQuery("SELECT ?d WHERE {\n" +
+        "   <"+uri+"> dbo:director ?d .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+        QuerySolution elem = result.next();
+        director = elem.getResource("d").getURI().toString();
+    }
+    System.out.println(director);
+    return director;
+  }
+  
+  public static String getFilmProducer(String uri){
+      String producer ="";
+      QueryExecution qexec = createPrefixedQuery("SELECT ?p WHERE {\n" +
+        "   <"+uri+"> dbo:producer ?p .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+        QuerySolution elem = result.next();
+        producer = elem.getResource("p").getURI().toString();
+    }
+    System.out.println(producer);
+    return producer;
+  }
+  
+  public static String getFilmMusicComposer(String uri){
+      String musicComposer ="";
+      QueryExecution qexec = createPrefixedQuery("SELECT ?m WHERE {\n" +
+        "   <"+uri+"> dbo:musicComposer ?m .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    if( result.hasNext() ){
+        QuerySolution elem = result.next();
+        musicComposer = elem.getResource("m").getURI().toString();
+    }
+    System.out.println(musicComposer);
+    return musicComposer;
+  }
+  
+  public static List<String> getFilmActors(String uri){
+      List<String> actors = new ArrayList<>();
+      QueryExecution qexec = createPrefixedQuery("SELECT ?a WHERE {\n" +
+        "   <"+uri+"> dbo:starring  ?a .\n" +
+        "}"); 
+    ResultSet result = qexec.execSelect();
+    while( result.hasNext() ){
+        QuerySolution elem = result.next();
+        actors.add(elem.getResource("a").getURI().toString());
+    }
+    return actors;
   }
   
   /*
